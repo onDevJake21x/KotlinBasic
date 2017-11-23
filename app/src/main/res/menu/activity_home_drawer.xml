@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_user"
+            android:icon="@drawable/ic_account"
+            android:title="User" />
+        <item
+            android:id="@+id/nav_task"
+            android:icon="@drawable/ic_task"
+            android:title="Itinerary" />
+        <item
+            android:id="@+id/nav_maps"
+            android:icon="@drawable/ic_map"
+            android:title="Map" />
+        <item
+            android:id="@+id/nav_dev"
+            android:icon="@drawable/ic_dev"
+            android:title="Fun" />
+
+        <item
+            android:id="@+id/nav_backup"
+            android:icon="@drawable/ic_storage"
+            android:title="Backup" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_sign_out"
+            android:title="Logout" />
+    </group>
+
+</menu>
