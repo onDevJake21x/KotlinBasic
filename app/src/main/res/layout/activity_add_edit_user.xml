@@ -36,31 +36,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="247dp"
+                android:id="@+id/item_photoImageView"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:layout_weight="2"
+                android:background="@drawable/bg_circle"
                 android:src="@drawable/ic_account" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:layout_weight=".3"
-                android:gravity="center"
-                android:text="Sample Position"
-                android:textColor="@color/textPrimary" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/cameraButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignEnd="@+id/item_photoImageView"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@+id/item_photoImageView"
+                android:layout_marginEnd="18dp"
+                android:layout_marginRight="18dp"
+                android:background="@drawable/bg_circle_camera"
+                android:padding="10dp"
+                android:src="@drawable/ic_photo_camera" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,6 +110,28 @@
                     android:layout_height="wrap_content"
                     android:hint="Contact Number"
                     android:inputType="number"
+                    android:text=""
+                    android:textColor="@color/textPrimary" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <!-- Birthday Label -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_cover_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:textColorHint="@color/textSecondary">
+
+
+                <EditText
+                    android:id="@+id/input_birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Birthday"
+                    android:focusable="false"
+                    android:inputType="text"
                     android:text=""
                     android:textColor="@color/textPrimary" />
 

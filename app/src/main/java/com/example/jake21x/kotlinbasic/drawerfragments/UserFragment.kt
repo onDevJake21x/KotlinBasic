@@ -27,7 +27,15 @@ import java.util.*
 import io.realm.RealmObject.deleteFromRealm
 import io.realm.RealmResults
 import android.R.attr.fragment
-
+import android.graphics.*
+import android.os.Environment
+import com.amulyakhare.textdrawable.TextDrawable
+import com.amulyakhare.textdrawable.util.ColorGenerator
+import kotlinx.android.synthetic.main.activity_add_edit_user.*
+import java.io.File
+import java.io.FileReader
+import java.io.IOException
+import java.text.SimpleDateFormat
 
 
 /**
@@ -183,6 +191,12 @@ class UserFragment : Fragment() {
             holder!!.txt_name.text = item.username
             holder!!.txt_email.text = item.email
             holder!!.txt_contact.text  = item.contact
+
+            var generator = ColorGenerator.MATERIAL;
+
+            var  drawable = TextDrawable.builder().buildRound( getInitials(item.username), generator.randomColor);
+            holder!!.item_photoImageView.setImageDrawable(drawable);
+
             holder!!.btn_delete.onClick {
 
                 context.alert {
@@ -215,6 +229,23 @@ class UserFragment : Fragment() {
             return UsersList.size
         }
 
+        fun getInitials(name: String?): String {
+            val initials = StringBuilder()
+            var addNext = true
+            if (name != null) {
+                for (i in 0 until name.length) {
+                    val c = name[i]
+                    if (c == ' ' || c == '-' || c == '.') {
+                        addNext = true
+                    } else if (addNext) {
+                        initials.append(c)
+                        addNext = false
+                    }
+                }
+            }
+            return initials.toString()
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
             val v = LayoutInflater.from(parent?.context).inflate(R.layout.user_item_onlist,parent,false);
             return ViewHolder(v);
@@ -226,7 +257,42 @@ class UserFragment : Fragment() {
             val txt_contact = itemView.find<TextView>(R.id.txt_contact);
             val btn_delete = itemView.find<ImageView>(R.id.btn_delete);
             val item_container = itemView.find<LinearLayout>(R.id.item_container);
+            val item_photoImageView = itemView.find<ImageView>(R.id.item_photoImageView);
         }
+
+
+        fun setScaledBitmap(item_photoImageView:ImageView,imageFilePath:String): Bitmap {
+
+            return  transform(BitmapFactory.decodeFile(imageFilePath))
+
+        }
+
+        fun transform(source: Bitmap): Bitmap {
+
+            val minEdge = Math.min(source.width, source.height)
+            val dx = (source.width - minEdge) / 2
+            val dy = (source.height - minEdge) / 2
+
+            // Init shader
+            val shader = BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+            val matrix = Matrix()
+            matrix.setTranslate((-dx).toFloat(), (-dy).toFloat())   // Move the target area to center of the source bitmap
+            shader.setLocalMatrix(matrix)
+
+            // Init paint
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+            paint.shader = shader
+
+            // Create and draw circle bitmap
+            val output = Bitmap.createBitmap(minEdge, minEdge, source.config)
+            val canvas = Canvas(output)
+            canvas.drawOval(RectF(0f, 0f, minEdge.toFloat(), minEdge.toFloat()), paint)
+
+            source.recycle()
+
+            return output
+        }
+
     }
 
 }// Required empty public constructor

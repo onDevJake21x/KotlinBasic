@@ -109,6 +109,8 @@ class MainActivity : AppCompatActivity() {
 
             queue.add(postRequest)
 
+            setCancelable(false);
+
         }.show();
 
     }

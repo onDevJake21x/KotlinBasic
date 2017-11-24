@@ -15,6 +15,7 @@
         android:id="@+id/item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
         android:clickable="true"
         android:orientation="vertical"
         android:paddingLeft="72dp"
@@ -28,7 +29,7 @@
             android:lines="1"
             android:text="Jake Garbo"
             android:textColor="#000"
-            android:textSize="@dimen/msg_text_primary"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -39,24 +40,24 @@
             android:lines="1"
             android:text="sample@email.com"
             android:textColor="@color/message"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/txt_contact"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
             android:text="09090990"
             android:textColor="@color/message"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/icon_container"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
+        android:layout_width="80dp"
+        android:layout_height="70dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -66,26 +67,11 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="@dimen/icon_width_height"
-                android:layout_height="@dimen/icon_width_height"
-                android:src="@drawable/bg_circle" />
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:id="@+id/item_photoImageView"
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_account" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/icon_front"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/icon_profile"
-                android:layout_width="@dimen/icon_width_height"
-                android:layout_height="@dimen/icon_width_height" />
 
         </RelativeLayout>
 
@@ -94,13 +80,12 @@
     <ImageView
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="65dp"
         android:layout_alignParentRight="true"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
         android:padding="10dp"
-        android:src="@drawable/ic_delete"
-        android:text="Dec 10 2017"
-        android:textColor="#4285f4"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_delete" />
 
 </RelativeLayout>
