@@ -1,91 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@drawable/bg_list_row"
+android:clickable="true"
+android:focusable="true"
+android:orientation="vertical"
+android:paddingBottom="@dimen/padding_list_row"
+android:paddingLeft="?listPreferredItemPaddingLeft"
+android:paddingRight="?listPreferredItemPaddingRight"
+android:paddingTop="@dimen/padding_list_row">
+
+<LinearLayout
+    android:id="@+id/item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_list_row"
+    android:layout_marginLeft="15dp"
     android:clickable="true"
-    android:focusable="true"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_list_row"
-    android:paddingLeft="?listPreferredItemPaddingLeft"
-    android:paddingRight="?listPreferredItemPaddingRight"
-    android:paddingTop="@dimen/padding_list_row">
+    android:paddingLeft="72dp"
+    android:paddingRight="@dimen/padding_list_row">
 
-    <LinearLayout
-        android:id="@+id/item_container"
+    <TextView
+        android:id="@+id/txt_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:clickable="true"
-        android:orientation="vertical"
-        android:paddingLeft="72dp"
-        android:paddingRight="@dimen/padding_list_row">
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="Jake Garbo"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/txt_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:text="Jake Garbo"
-            android:textColor="#000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/txt_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="sample@email.com"
+        android:textColor="@color/message"
+        android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/txt_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:text="sample@email.com"
-            android:textColor="@color/message"
-            android:textSize="15sp" />
+    <TextView
+        android:id="@+id/txt_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="09090990"
+        android:textColor="@color/message"
+        android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/txt_contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:text="09090990"
-            android:textColor="@color/message"
-            android:textSize="15sp" />
+</LinearLayout>
 
-    </LinearLayout>
+<RelativeLayout
+    android:id="@+id/icon_container"
+    android:layout_width="80dp"
+    android:layout_height="70dp"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/icon_container"
-        android:layout_width="80dp"
-        android:layout_height="70dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:id="@+id/icon_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/icon_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="90dp"
-                android:id="@+id/item_photoImageView"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_account" />
-
-        </RelativeLayout>
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="90dp"
+            android:id="@+id/item_photoImageView"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_account" />
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/btn_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="65dp"
-        android:layout_alignParentRight="true"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete" />
+</RelativeLayout>
+
+<ImageView
+    android:id="@+id/btn_delete"
+    android:layout_width="wrap_content"
+    android:layout_height="65dp"
+    android:layout_alignParentRight="true"
+    android:adjustViewBounds="false"
+    android:cropToPadding="false"
+    android:padding="10dp"
+    android:scaleType="fitCenter"
+    android:src="@drawable/ic_delete" />
 
 </RelativeLayout>

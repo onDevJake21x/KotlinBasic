@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="@dimen/activity_horizontal_margin">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
 
     <LinearLayout
@@ -11,11 +11,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <!-- TODO: Update blank fragment layout -->
-        <TextView
+
+        <LinearLayout
+            android:id="@+id/liinear_no_user"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Task !" />
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_task" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="No Itinerary  , Tap   '+'   to add itinerary!"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="17sp" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/task_recycler_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            tools:listitem="@layout/task_item_onlist">
+
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
@@ -28,5 +60,6 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add"
         tools:ignore="VectorDrawableCompat" />
+
 
 </FrameLayout>

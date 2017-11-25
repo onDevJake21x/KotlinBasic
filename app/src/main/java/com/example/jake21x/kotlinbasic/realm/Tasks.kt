@@ -12,10 +12,14 @@ open class Tasks(
         @PrimaryKey var pk:Long? = 0,
         var id:String? = null,
         var user:String? = null,
-        var note:String? = null,
-        var location:String? = null,
-        var datetime:String? = null,
+        var remarks:String? = null,
+        var long:String? = null,
+        var lat:String? = null,
+        var date:String? = null,
+        var time:String? = null,
         var tasktype:String? = null,
+        var starttime:String? = null,
+        var endtime:String? = null,
         var client:String? = null
     ):RealmObject(){
 

@@ -15,7 +15,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.drawerfragments.User.AddEditUserActivity
+import com.example.jake21x.kotlinbasic.drawerfragments.activities.AddEditUserActivity
 import com.example.jake21x.kotlinbasic.realm.Users
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -24,18 +24,14 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import java.util.*
-import io.realm.RealmObject.deleteFromRealm
 import io.realm.RealmResults
-import android.R.attr.fragment
 import android.graphics.*
-import android.os.Environment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
-import kotlinx.android.synthetic.main.activity_add_edit_user.*
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
-import java.text.SimpleDateFormat
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 
 /**
@@ -121,6 +117,11 @@ class UserFragment : Fragment() {
 
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.hasFixedSize();
+
+//        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
+//        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
+//        divider.set
+//        recyclerView!!.addItemDecoration(divider)
 
         val list = ArrayList(getUsers(realm!!));
 

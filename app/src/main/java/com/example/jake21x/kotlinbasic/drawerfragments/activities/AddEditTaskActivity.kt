@@ -1,7 +1,8 @@
-package com.example.jake21x.kotlinbasic.drawerfragments.User
+package com.example.jake21x.kotlinbasic.drawerfragments.activities
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.*
 import android.support.v7.app.AppCompatActivity
@@ -14,29 +15,28 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.TimePicker
 import android.widget.Toast
 import com.example.jake21x.kotlinbasic.R
+import com.example.jake21x.kotlinbasic.realm.Tasks
 import com.example.jake21x.kotlinbasic.realm.Users
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_add_edit_user.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.onClick
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddEditUserActivity : AppCompatActivity() {
+class AddEditTaskActivity : AppCompatActivity() {
 
 
-    lateinit var input_name:EditText
-    lateinit var input_email:EditText
-    lateinit var input_contact:EditText
-    lateinit var input_address:EditText
-    lateinit var input_birthday:EditText
+    lateinit var input_client:EditText
+    lateinit var input_date:EditText
+    lateinit var input_time:EditText
+    lateinit var input_remarks:EditText
     lateinit var realm:Realm;
 
     val CAMERA_REQUEST_CODE = 0
@@ -46,32 +46,51 @@ class AddEditUserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_edit_user)
+        setContentView(R.layout.activity_add_edit_task)
 
-       input_name = findViewById<EditText>(R.id.input_name);
-       input_email = findViewById<EditText>(R.id.input_email);
-       input_contact = findViewById<EditText>(R.id.input_contact);
-       input_address = findViewById<EditText>(R.id.input_address);
-       input_birthday = findViewById<EditText>(R.id.input_birthday);
-       val input_cover_birthday = findViewById<TextInputLayout>(R.id.input_cover_birthday);
+       input_client = findViewById<EditText>(R.id.input_client);
+       input_date = findViewById<EditText>(R.id.input_date);
+       input_time = findViewById<EditText>(R.id.input_time);
+        input_remarks = findViewById<EditText>(R.id.input_remarks);
+
 
         val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
         realm = Realm.getInstance(config);
 
         setupToolBar();
 
-        input_birthday.onClick {
+
+        val date = Date()
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd")
+        input_date.setText(dateFormat.format(date).toString());
+
+
+        val timeFormat = SimpleDateFormat("hh:mm a")
+        input_time.setText(timeFormat.format(date).toString());
+
+        input_date.onClick {
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)
             val year = c.get(Calendar.YEAR)
 
             val dpd = DatePickerDialog(this, android.R.style.Theme_Material_Dialog, DatePickerDialog.OnDateSetListener { datePicker, year, monthOfYear, dayOfMonth ->
-                input_birthday.setText("${monthOfYear + 1}/${dayOfMonth}/${year}");
+                input_date.setText("${monthOfYear + 1}/${dayOfMonth}/${year}");
             }, year, month, day)
 
             //show datepicker
             dpd.show()
+        }
+
+
+        input_time.onClick {
+            val hh = SimpleDateFormat("hh")
+            val mm = SimpleDateFormat("mm")
+
+            val dpt = TimePickerDialog(this, android.R.style.Theme_Material_Dialog, TimePickerDialog.OnTimeSetListener{ timePicker, hh, mm ->
+                input_time.setText(""+hh+":"+mm);
+            },hh.format(date).toInt(),mm.format(date).toInt(), false)
+            dpt.show();
         }
 
 
@@ -100,7 +119,7 @@ class AddEditUserActivity : AppCompatActivity() {
         val ab = supportActionBar
         ab?.setHomeAsUpIndicator(R.drawable.ic_close)
         ab?.setDisplayHomeAsUpEnabled(true)
-        toolbar.title = "Create User"
+        toolbar.title = "Create Itinerary"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -198,10 +217,8 @@ class AddEditUserActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_save -> {
 
-                if( !input_name.text.toString().equals("") &&
-                    !input_address.text.toString().equals("") &&
-                    !input_contact.text.toString().equals("") &&
-                    !input_email.text.toString().equals("")  ){
+                if( !input_client.text.toString().equals("") &&
+                    !input_remarks.text.toString().equals("")  ){
 
                     store_user(realm);
 
@@ -231,30 +248,32 @@ class AddEditUserActivity : AppCompatActivity() {
         alert {
 
             title("Saving User..");
-            message("Are you usre you want to save user?");
+            message("Are you usre you want to save Itinerary?");
             positiveButton("Yes") {
                 var pk: Long = 1
-                if (realm.where(Users::class.java).max("pk") != null) {
-                    pk = realm.where(Users::class.java).max("pk") as Long + 1
+                if (realm.where(Tasks::class.java).max("pk") != null) {
+                    pk = realm.where(Tasks::class.java).max("pk") as Long + 1
                 }
 
 
                 realm.beginTransaction();
-                val db = realm.createObject(Users::class.java, pk)
+                val db = realm.createObject(Tasks::class.java, pk)
 
                 db.id  = pk.toString();
-                db.username  = input_name.text.toString();
-                db.address  = input_address.text.toString();
-                db.contact  = input_contact.text.toString();
-                db.email  = input_email.text.toString();
-                db.position  = "HomeBase Programmer";
-                db.birthday  = input_birthday.text.toString();
 
-                if(imageFilePath != null){
-                    db.photo  = captured!!.absolutePath.toString() ;
-                }else{
-                    db.photo  = null;
-                }
+                db.client  = input_client.text.toString();
+                db.remarks  = input_remarks.text.toString();
+                db.date  = input_date.text.toString();
+                db.time  = input_time.text.toString();
+
+                db.tasktype  = "none";
+
+                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                db.starttime  = timeFormat.format(Date()).toString();
+                db.endtime  = timeFormat.format(Date()).toString();
+
+                db.long  = "000";
+                db.lat  = "000";
 
                 realm.commitTransaction();
                 inputClear();
@@ -274,9 +293,7 @@ class AddEditUserActivity : AppCompatActivity() {
 
 
     fun inputClear(){
-        input_name.text.clear();
-        input_email.text.clear();
-        input_contact.text.clear();
-        input_address.text.clear();
+        input_client.text.clear();
+        input_remarks.text.clear();
     }
 }
