@@ -42,6 +42,7 @@ class HomeFragment : Fragment() {
             data = arguments.getString(ARG_PARAM)
             //activity.longToast(data.toString());
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,

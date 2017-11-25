@@ -258,7 +258,7 @@ class TaskFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-            val v = LayoutInflater.from(parent?.context).inflate(R.layout.user_item_onlist,parent,false);
+            val v = LayoutInflater.from(parent?.context).inflate(R.layout.task_item_onlist,parent,false);
             return ViewHolder(v);
         }
 

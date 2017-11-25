@@ -37,7 +37,7 @@ class AddEditUserActivity : AppCompatActivity() {
     lateinit var input_birthday:EditText
     lateinit var realm:Realm;
 
-    val CAMERA_REQUEST_CODE = 0
+    val CAMERA_REQUEST_CODE = 1
     var imageFilePath: String?=null;
     var captured: File?=null;
 

@@ -176,7 +176,7 @@
 
 
         <ImageView
-            android:id="@+id/item_photoImageView3"
+            android:id="@+id/item_photoImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ktlogo" />

@@ -7,12 +7,13 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="15dp">
 
     <LinearLayout
         android:id="@+id/item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:clickable="true"
         android:orientation="vertical"
         android:paddingLeft="72dp"
@@ -49,7 +50,7 @@
                 android:text="Dec 2 2017  at 4pm"
                 android:textColor="@color/message"
                 android:textSize="15sp" />
-                android:textSize="15sp" />
+            android:textSize="15sp" />
 
         </LinearLayout>
 
@@ -109,7 +110,7 @@
     <RelativeLayout
         android:id="@+id/icon_container"
         android:layout_width="70dp"
-        android:layout_height="50dp"
+        android:layout_height="70dp"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="231dp"
         android:layout_marginRight="231dp"
@@ -127,8 +128,10 @@
             <ImageView
                 android:id="@+id/item_photoImageView"
                 android:layout_width="70dp"
-                android:layout_height="60dp"
-                android:layout_centerInParent="true"
+                android:layout_height="70dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:src="@drawable/ic_account" />
 
         </RelativeLayout>
