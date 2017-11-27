@@ -15,6 +15,7 @@
         <item>Home</item>
         <item>User</item>
         <item>Itinerary</item>
+        <item>Logs</item>
         <item>Map</item>
     </string-array>
     <string name="title_activity_home">HomeActivity</string>

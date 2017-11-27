@@ -1,69 +1,46 @@
-package com.example.jake21x.kotlinbasic.drawerfragments
+package com.example.jake21x.kotlinbasic.drawer
 
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.example.jake21x.kotlinbasic.R
-import kotlinx.android.synthetic.main.nav_header_home.*
-import org.jetbrains.anko.find
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
-import org.json.JSONArray
-import org.json.JSONObject
 
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [HomeFragment.OnFragmentInteractionListener] interface
+ * [MapFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class MapFragment : Fragment() {
 
     // TODO: Rename and change types of parameters
-    private var data: String? = null
-    var user_code:Int = 1;
-    var _view:View?=null;
-    var txt_api_res:TextView?=null;
+    private var mParam1: String? = null
+    private var mParam2: String? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            data = arguments.getString(ARG_PARAM)
-            //activity.longToast(data.toString());
+            mParam1 = arguments.getString(ARG_PARAM1)
+            mParam2 = arguments.getString(ARG_PARAM2)
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        _view= inflater!!.inflate(R.layout.fragment_home, container, false)
-        txt_api_res = _view!!.find<TextView>(R.id.txt_api_res);
-
-        if(data!=null){
-            txt_api_res!!.text =  ""+
-                    "Token recieve : ${JSONObject(data.toString())["token"].toString().substring(0,45)} ..."+"\n" +
-                    "Name : ${ JSONObject(JSONArray(JSONObject(data.toString())["credentials"].toString()).get(0).toString())["name"] } \n" +
-                    "Username : ${ JSONObject(JSONArray(JSONObject(data.toString())["credentials"].toString()).get(0).toString())["email"] } \n" +
-                    "Password : ${ JSONObject(JSONArray(JSONObject(data.toString())["credentials"].toString()).get(0).toString())["set_password"] } \n"
-
-        }else{
-            txt_api_res!!.text =  "";
-        }
+        val view: View = inflater!!.inflate(R.layout.fragment_map, container, false)
 
 
-        return _view
+        return view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -102,13 +79,25 @@ class HomeFragment : Fragment() {
     }
 
     companion object {
+        // TODO: Rename parameter arguments, choose names that match
+        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+        private val ARG_PARAM1 = "param1"
+        private val ARG_PARAM2 = "param2"
 
-        private val ARG_PARAM = "data"
-
-        fun newInstance(param: String): HomeFragment {
-            val fragment = HomeFragment()
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment MapFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        fun newInstance(param1: String, param2: String): MapFragment {
+            val fragment = MapFragment()
             val args = Bundle()
-            args.putString(ARG_PARAM, param)
+            args.putString(ARG_PARAM1, param1)
+            args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
             return fragment
         }

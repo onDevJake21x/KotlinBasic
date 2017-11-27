@@ -1,74 +1,121 @@
-package com.example.jake21x.kotlinbasic.drawerfragments.activities
+package com.example.jake21x.kotlinbasic.drawer.activities
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.*
+import android.location.Location
+import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.support.design.widget.TextInputLayout
 import android.support.v4.content.FileProvider
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.realm.Users
+import com.example.jake21x.kotlinbasic.realm.Tasks
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import kotlinx.android.synthetic.main.activity_add_edit_user.*
+import kotlinx.android.synthetic.main.activity_add_edit_task.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.locationManager
 import org.jetbrains.anko.onClick
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddEditUserActivity : AppCompatActivity() {
+class AddEditTaskActivity  : AppCompatActivity() {
 
 
-    lateinit var input_name:EditText
-    lateinit var input_email:EditText
-    lateinit var input_contact:EditText
-    lateinit var input_address:EditText
-    lateinit var input_birthday:EditText
+    lateinit var input_client:EditText
+    lateinit var input_date:EditText
+    lateinit var input_time:EditText
+    lateinit var input_remarks:EditText
+
+    lateinit var txt_location:TextView
+
     lateinit var realm:Realm;
 
-    val CAMERA_REQUEST_CODE = 1
+    val CAMERA_REQUEST_CODE = 0
     var imageFilePath: String?=null;
     var captured: File?=null;
+    var set_starttime: String?=null;
+    var set_endtime: String?=null;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_edit_user)
+        setContentView(R.layout.activity_add_edit_task)
 
-       input_name = findViewById<EditText>(R.id.input_name);
-       input_email = findViewById<EditText>(R.id.input_email);
-       input_contact = findViewById<EditText>(R.id.input_contact);
-       input_address = findViewById<EditText>(R.id.input_address);
-       input_birthday = findViewById<EditText>(R.id.input_birthday);
+        input_client = findViewById<EditText>(R.id.input_client);
+        input_date = findViewById<EditText>(R.id.input_date);
+        input_time = findViewById<EditText>(R.id.input_time);
+        input_remarks = findViewById<EditText>(R.id.input_remarks);
+
+        txt_location = findViewById<TextView>(R.id.txt_location);
 
         val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
         realm = Realm.getInstance(config);
 
         setupToolBar();
 
-        input_birthday.onClick {
+
+        val date = Date()
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd");
+        input_date.setText(dateFormat.format(date).toString());
+
+
+        val timeFormat = SimpleDateFormat("hh:mm a")
+        input_time.setText(timeFormat.format(date).toString());
+
+
+        //TODO this part is need to check and get first the values for editing ..
+        val timer = SimpleDateFormat("yyyy/MM/dd HH:mm")
+        if(set_starttime == null){
+            // new
+            set_starttime = timer.format(date).toString();
+        }else{
+            // edit starttime and endtime must preserve
+            // for now if edit ..
+            // we need to call set_endtime = value from db .
+        }
+
+        input_date.onClick {
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)
             val year = c.get(Calendar.YEAR)
 
             val dpd = DatePickerDialog(this, android.R.style.Theme_Material_Dialog, DatePickerDialog.OnDateSetListener { datePicker, year, monthOfYear, dayOfMonth ->
-                input_birthday.setText("${monthOfYear + 1}/${dayOfMonth}/${year}");
+                input_date.setText("${monthOfYear + 1}/${dayOfMonth}/${year}");
             }, year, month, day)
 
             //show datepicker
             dpd.show()
+        }
+
+
+        input_time.onClick {
+            val hh = SimpleDateFormat("hh")
+            val mm = SimpleDateFormat("mm")
+
+            val dpt = TimePickerDialog(this, android.R.style.Theme_Material_Dialog, TimePickerDialog.OnTimeSetListener{ timePicker, hh, mm ->
+                input_time.setText(""+hh+":"+mm);
+            },hh.format(date).toInt(),mm.format(date).toInt(), false)
+            dpt.show();
         }
 
 
@@ -88,6 +135,19 @@ class AddEditUserActivity : AppCompatActivity() {
                 Toast.makeText(this, "Could not create file!", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+    }
+
+    // Callbacks for Nearby Connection
+    private inner class ConnectionCallbacks : GoogleApiClient.ConnectionCallbacks {
+        override fun onConnected(p0: Bundle?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onConnectionSuspended(p0: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
     }
 
     private fun setupToolBar() {
@@ -97,7 +157,7 @@ class AddEditUserActivity : AppCompatActivity() {
         val ab = supportActionBar
         ab?.setHomeAsUpIndicator(R.drawable.ic_close)
         ab?.setDisplayHomeAsUpEnabled(true)
-        toolbar.title = "Create User"
+        toolbar.title = "Create Itinerary"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -105,11 +165,10 @@ class AddEditUserActivity : AppCompatActivity() {
 
         when(requestCode) {
             CAMERA_REQUEST_CODE -> {
-/*                if(resultCode == Activity.RESULT_OK && data != null) {
+                /*if(resultCode == Activity.RESULT_OK && data != null) {
                     photoImageView.setImageBitmap(data.extras.get("data") as Bitmap)
                 }*/
                 if (resultCode == Activity.RESULT_OK) {
-
                     item_photoImageView.setImageBitmap(setScaledBitmap())
                 }
             }
@@ -147,34 +206,8 @@ class AddEditUserActivity : AppCompatActivity() {
         bmOptions.inSampleSize = scaleFactor;
         bmOptions
 
-        return  transform(BitmapFactory.decodeFile(imageFilePath, bmOptions))
+        return  BitmapFactory.decodeFile(imageFilePath, bmOptions)
 
-    }
-
-     fun transform(source: Bitmap): Bitmap {
-
-        val minEdge = Math.min(source.width, source.height)
-        val dx = (source.width - minEdge) / 2
-        val dy = (source.height - minEdge) / 2
-
-        // Init shader
-        val shader = BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
-        val matrix = Matrix()
-        matrix.setTranslate((-dx).toFloat(), (-dy).toFloat())   // Move the target area to center of the source bitmap
-        shader.setLocalMatrix(matrix)
-
-        // Init paint
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.shader = shader
-
-        // Create and draw circle bitmap
-        val output = Bitmap.createBitmap(minEdge, minEdge, source.config)
-        val canvas = Canvas(output)
-        canvas.drawOval(RectF(0f, 0f, minEdge.toFloat(), minEdge.toFloat()), paint)
-
-        source.recycle()
-
-        return output
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -195,10 +228,8 @@ class AddEditUserActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_save -> {
 
-                if( !input_name.text.toString().equals("") &&
-                    !input_address.text.toString().equals("") &&
-                    !input_contact.text.toString().equals("") &&
-                    !input_email.text.toString().equals("")  ){
+                if( !input_client.text.toString().equals("") &&
+                    !input_remarks.text.toString().equals("")  ){
 
                     store_user(realm);
 
@@ -228,30 +259,37 @@ class AddEditUserActivity : AppCompatActivity() {
         alert {
 
             title("Saving User..");
-            message("Are you usre you want to save user?");
+            message("Are you usre you want to save Itinerary?");
             positiveButton("Yes") {
                 var pk: Long = 1
-                if (realm.where(Users::class.java).max("pk") != null) {
-                    pk = realm.where(Users::class.java).max("pk") as Long + 1
+                if (realm.where(Tasks::class.java).max("pk") != null) {
+                    pk = realm.where(Tasks::class.java).max("pk") as Long + 1
                 }
 
 
                 realm.beginTransaction();
-                val db = realm.createObject(Users::class.java, pk)
+                val db = realm.createObject(Tasks::class.java, pk)
 
                 db.id  = pk.toString();
-                db.username  = input_name.text.toString();
-                db.address  = input_address.text.toString();
-                db.contact  = input_contact.text.toString();
-                db.email  = input_email.text.toString();
-                db.position  = "HomeBase Programmer";
-                db.birthday  = input_birthday.text.toString();
 
-                if(imageFilePath != null){
-                    db.photo  = captured!!.absolutePath.toString() ;
+                db.client  = input_client.text.toString();
+                db.remarks  = input_remarks.text.toString();
+                db.date  = input_date.text.toString();
+                db.time  = input_time.text.toString();
+
+                db.tasktype  = "none";
+
+                db.starttime  = set_starttime;
+
+                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                if(set_endtime == null){
+                    db.endtime  = timeFormat.format(Date()).toString();
                 }else{
-                    db.photo  = null;
+                    db.endtime  = set_endtime;
                 }
+
+                db.long  = "000";
+                db.lat  = "000";
 
                 realm.commitTransaction();
                 inputClear();
@@ -271,9 +309,9 @@ class AddEditUserActivity : AppCompatActivity() {
 
 
     fun inputClear(){
-        input_name.text.clear();
-        input_email.text.clear();
-        input_contact.text.clear();
-        input_address.text.clear();
+        input_client.text.clear();
+        input_remarks.text.clear();
     }
+
+
 }

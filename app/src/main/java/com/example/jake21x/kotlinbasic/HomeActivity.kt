@@ -6,15 +6,10 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
 import android.view.MenuItem
-import com.example.jake21x.kotlinbasic.drawerfragments.HomeFragment
-import com.example.jake21x.kotlinbasic.drawerfragments.MapFragment
-import com.example.jake21x.kotlinbasic.drawerfragments.TaskFragment
-import com.example.jake21x.kotlinbasic.drawerfragments.UserFragment
+import com.example.jake21x.kotlinbasic.drawer.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
-import org.jetbrains.anko.toast
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -97,6 +92,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 var fragmentTransaction = supportFragmentManager.beginTransaction()
                 fragmentTransaction.replace(R.id.frame, MapFragment()).commit()
                 toolbar.title = "Map";
+            }
+            R.id.nav_logs -> {
+                var fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.frame, LogsFragment()).commit()
+                toolbar.title = "Logs";
             }
             R.id.nav_dev -> {
                 toolbar.title = "Fun test";

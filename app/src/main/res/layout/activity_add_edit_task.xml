@@ -30,7 +30,7 @@
     android:orientation="vertical"
     android:scrollbarStyle="outsideOverlay"
     android:layout_margin="@dimen/activity_horizontal_margin"
-    tools:context="com.example.jake21x.kotlinbasic.drawerfragments.activities.AddEditUserActivity">
+    tools:context="com.example.jake21x.kotlinbasic.drawer.activities.AddEditUserActivity">
 
     <!-- name Label -->
     <LinearLayout
@@ -167,7 +167,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/txt_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Stablishing Location .." />

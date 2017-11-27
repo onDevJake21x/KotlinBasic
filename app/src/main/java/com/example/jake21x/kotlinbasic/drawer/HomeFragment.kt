@@ -1,49 +1,73 @@
-package com.example.jake21x.kotlinbasic.drawerfragments
+package com.example.jake21x.kotlinbasic.drawer
 
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.example.jake21x.kotlinbasic.R
+import com.example.jake21x.kotlinbasic.realm.Session
+import com.example.jake21x.kotlinbasic.realm.Users
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import org.jetbrains.anko.find
-import org.jetbrains.anko.toast
+import org.json.JSONArray
+import org.json.JSONObject
 
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [MapFragment.OnFragmentInteractionListener] interface
+ * [HomeFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [MapFragment.newInstance] factory method to
+ * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment() {
+class HomeFragment : Fragment() {
 
     // TODO: Rename and change types of parameters
-    private var mParam1: String? = null
-    private var mParam2: String? = null
+    private var data: String? = null
+    var user_code:Int = 1;
+    var _view:View?=null;
+    var txt_api_res:TextView?=null;
+
+    var realm:Realm?=null;
+    var config:RealmConfiguration?=null;
 
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            mParam1 = arguments.getString(ARG_PARAM1)
-            mParam2 = arguments.getString(ARG_PARAM2)
+            data = arguments.getString(ARG_PARAM)
+            //activity.longToast(data.toString());
         }
+
+        config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
+        realm = Realm.getInstance(config);
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view: View = inflater!!.inflate(R.layout.fragment_map, container, false)
+        _view= inflater!!.inflate(R.layout.fragment_home, container, false)
+        txt_api_res = _view!!.find<TextView>(R.id.txt_api_res);
+
+        var onsession =  realm!!.where(Session::class.java).findAll();
+
+            txt_api_res!!.text =  ""+
+                    "Token recieve :  NO TOKEN  "+"\n" +
+                    "id : ${  onsession.get(0)!!.id.toString()  } \n" +
+                    "user_level : ${  onsession.get(0)!!.user_level.toString()   } \n" +
+                    "name : ${  onsession.get(0)!!.name.toString()   } \n" +
+                    "email : ${  onsession.get(0)!!.email.toString()   } \n"
 
 
-        return view
+        return _view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -82,25 +106,13 @@ class MapFragment : Fragment() {
     }
 
     companion object {
-        // TODO: Rename parameter arguments, choose names that match
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-        private val ARG_PARAM1 = "param1"
-        private val ARG_PARAM2 = "param2"
 
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        fun newInstance(param1: String, param2: String): MapFragment {
-            val fragment = MapFragment()
+        private val ARG_PARAM = "data"
+
+        fun newInstance(param: String): HomeFragment {
+            val fragment = HomeFragment()
             val args = Bundle()
-            args.putString(ARG_PARAM1, param1)
-            args.putString(ARG_PARAM2, param2)
+            args.putString(ARG_PARAM, param)
             fragment.arguments = args
             return fragment
         }

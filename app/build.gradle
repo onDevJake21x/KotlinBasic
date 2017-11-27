@@ -9,7 +9,7 @@ apply plugin: 'realm-android'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.example.jake21x.kotlinbasic"
+        applicationId "com.jake21x.kotlinbasic"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
@@ -39,5 +39,6 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-sdk15:0.8.3'
     implementation 'com.android.volley:volley:1.0.0'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    implementation 'com.google.android.gms:play-services-location:11.6.0'
 
 }

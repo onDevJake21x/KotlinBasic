@@ -21,6 +21,10 @@
             android:icon="@drawable/ic_map"
             android:title="Map" />
         <item
+            android:id="@+id/nav_logs"
+            android:icon="@drawable/ic_dev"
+            android:title="Log" />
+        <item
             android:id="@+id/nav_dev"
             android:icon="@drawable/ic_dev"
             android:title="Fun" />
