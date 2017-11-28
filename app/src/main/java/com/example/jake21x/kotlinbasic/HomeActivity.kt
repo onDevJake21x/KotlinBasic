@@ -30,10 +30,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val data = intent._getStringExtra(intent,"data");
 
+//        val intent =  Intent(this,DatabaseManager::class.java)
+//        startActivity(intent);
+
         var fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame, HomeFragment.newInstance(data.toString())).commit();
         toolbar.title = "Home";
-
 
     }
 

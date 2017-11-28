@@ -12,18 +12,154 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- TODO: Update blank fragment layout -->
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/logs_recycler_list"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Session"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_session_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Id:" />
+
+                <TextView
+                    android:id="@+id/txt_session_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name:" />
+
+                <TextView
+                    android:id="@+id/txt_session_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Password" />
+
+                <TextView
+                    android:id="@+id/txt_session_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email:" />
+
+                <TextView
+                    android:id="@+id/txt_session_token"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Token:" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="id" />
+
+                <TextView
+                    android:id="@+id/txt_user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="user" />
+
+                <TextView
+                    android:id="@+id/txt_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="date" />
+
+                <TextView
+                    android:id="@+id/txt_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="time" />
+
+                <TextView
+                    android:id="@+id/txt_battery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="battery" />
+
+                <TextView
+                    android:id="@+id/txt_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="status" />
+
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            tools:listitem="@layout/logs_item_onlist">
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight=".99">
 
-        </android.support.v7.widget.RecyclerView>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/logs_recycler_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                tools:listitem="@layout/logs_item_onlist"></android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_sync"
+        tools:ignore="VectorDrawableCompat" />
 
 </FrameLayout>

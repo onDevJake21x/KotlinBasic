@@ -2,12 +2,9 @@ package com.example.jake21x.kotlinbasic.drawer.activities
 
 import android.app.Activity
 import android.app.DatePickerDialog
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.*
-import android.location.Location
-import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -20,17 +17,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.realm.Tasks
-import com.google.android.gms.common.ConnectionResult
+import com.example.jake21x.kotlinbasic.model.Tasks
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_add_edit_task.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.locationManager
 import org.jetbrains.anko.onClick
 import java.io.File
 import java.io.IOException
@@ -46,8 +36,6 @@ class AddEditTaskActivity  : AppCompatActivity() {
     lateinit var input_remarks:EditText
 
     lateinit var txt_location:TextView
-
-    lateinit var realm:Realm;
 
     val CAMERA_REQUEST_CODE = 0
     var imageFilePath: String?=null;
@@ -67,8 +55,6 @@ class AddEditTaskActivity  : AppCompatActivity() {
 
         txt_location = findViewById<TextView>(R.id.txt_location);
 
-        val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
 
         setupToolBar();
 
@@ -231,7 +217,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
                 if( !input_client.text.toString().equals("") &&
                     !input_remarks.text.toString().equals("")  ){
 
-                    store_user(realm);
+//                    store_user(realm);
 
                 }else{
                     alert {
@@ -254,44 +240,27 @@ class AddEditTaskActivity  : AppCompatActivity() {
     }
 
 
-    fun store_user(realm:Realm){
+    fun store_user(){
 
         alert {
 
             title("Saving User..");
             message("Are you usre you want to save Itinerary?");
             positiveButton("Yes") {
-                var pk: Long = 1
-                if (realm.where(Tasks::class.java).max("pk") != null) {
-                    pk = realm.where(Tasks::class.java).max("pk") as Long + 1
-                }
 
+                // save now
 
-                realm.beginTransaction();
-                val db = realm.createObject(Tasks::class.java, pk)
+//                db.tasktype  = "none";
+//
+//                db.starttime  = set_starttime;
+//
+//                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
+//                if(set_endtime == null){
+//                    db.endtime  = timeFormat.format(Date()).toString();
+//                }else{
+//                    db.endtime  = set_endtime;
+//                }
 
-                db.id  = pk.toString();
-
-                db.client  = input_client.text.toString();
-                db.remarks  = input_remarks.text.toString();
-                db.date  = input_date.text.toString();
-                db.time  = input_time.text.toString();
-
-                db.tasktype  = "none";
-
-                db.starttime  = set_starttime;
-
-                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-                if(set_endtime == null){
-                    db.endtime  = timeFormat.format(Date()).toString();
-                }else{
-                    db.endtime  = set_endtime;
-                }
-
-                db.long  = "000";
-                db.lat  = "000";
-
-                realm.commitTransaction();
                 inputClear();
                 dismiss();
                 setResult(1);

@@ -19,10 +19,7 @@ import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.drawer.activities.AddEditTaskActivity
-import com.example.jake21x.kotlinbasic.realm.Tasks
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.RealmResults
+import com.example.jake21x.kotlinbasic.model.Tasks
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
@@ -48,9 +45,6 @@ class TaskFragment : Fragment() {
     var user_code:Int = 1;
     var _view:View?=null;
 
-    var realm:Realm?=null;
-    var config:RealmConfiguration?=null;
-
     var liinear_no_user: LinearLayout?=null;
 
     var linearLayoutManager: LinearLayoutManager?=null;
@@ -67,8 +61,6 @@ class TaskFragment : Fragment() {
             mParam2 = arguments.getString(ARG_PARAM2)
         }
 
-        config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -103,28 +95,24 @@ class TaskFragment : Fragment() {
     }
 
 
-    fun getUsers(realm:Realm) : RealmResults<Tasks> {
-        return realm.where(Tasks::class.java).findAll()
-    }
-
 
     fun refreshList() {
 
-        linearLayoutManager = LinearLayoutManager(activity);
-
-        recyclerView!!.layoutManager = linearLayoutManager
-        recyclerView!!.hasFixedSize();
-
-        val list = ArrayList(getUsers(realm!!));
-
-        if(list.size != 0 ){
-            liinear_no_user!!.setVisibility(View.GONE);
-        }else{
-            liinear_no_user!!.setVisibility(View.VISIBLE);
-        }
-
-        adapter = TaskCustomAdapter(activity,list);
-        recyclerView!!.adapter = adapter
+//        linearLayoutManager = LinearLayoutManager(activity);
+//
+//        recyclerView!!.layoutManager = linearLayoutManager
+//        recyclerView!!.hasFixedSize();
+//
+//        val list = ArrayList(getUsers(realm!!));
+//
+//        if(list.size != 0 ){
+//            liinear_no_user!!.setVisibility(View.GONE);
+//        }else{
+//            liinear_no_user!!.setVisibility(View.VISIBLE);
+//        }
+//
+//        adapter = TaskCustomAdapter(activity,list);
+//        recyclerView!!.adapter = adapter
 
     }
 
@@ -194,8 +182,6 @@ class TaskFragment : Fragment() {
 
             val item : Tasks = TaskList[position]
             val context : Context = context;
-            val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-            val realm = Realm.getInstance(config);
 
             holder!!.txt_client.text = item.client
             holder!!.txt_datetime.text = item.date+" , "+item.time
@@ -219,11 +205,6 @@ class TaskFragment : Fragment() {
 
                         TaskList.remove(item);
                         notifyDataSetChanged();
-
-                        realm.beginTransaction()
-                        val messageobj = realm.where(Tasks::class.java).contains("id", item.id.toString()).findAll()
-                        messageobj.deleteAllFromRealm()
-                        realm.commitTransaction();
 
                         dismiss()
                     }

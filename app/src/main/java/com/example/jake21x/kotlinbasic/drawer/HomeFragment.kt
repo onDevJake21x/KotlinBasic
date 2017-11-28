@@ -9,13 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.realm.Session
-import com.example.jake21x.kotlinbasic.realm.Users
-import io.realm.Realm
-import io.realm.RealmConfiguration
+import com.example.jake21x.kotlinbasic.model.Session
 import org.jetbrains.anko.find
-import org.json.JSONArray
-import org.json.JSONObject
 
 
 /**
@@ -34,8 +29,6 @@ class HomeFragment : Fragment() {
     var _view:View?=null;
     var txt_api_res:TextView?=null;
 
-    var realm:Realm?=null;
-    var config:RealmConfiguration?=null;
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -46,9 +39,6 @@ class HomeFragment : Fragment() {
             //activity.longToast(data.toString());
         }
 
-        config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -57,15 +47,13 @@ class HomeFragment : Fragment() {
         _view= inflater!!.inflate(R.layout.fragment_home, container, false)
         txt_api_res = _view!!.find<TextView>(R.id.txt_api_res);
 
-        var onsession =  realm!!.where(Session::class.java).findAll();
 
-            txt_api_res!!.text =  ""+
-                    "Token recieve :  NO TOKEN  "+"\n" +
-                    "id : ${  onsession.get(0)!!.id.toString()  } \n" +
-                    "user_level : ${  onsession.get(0)!!.user_level.toString()   } \n" +
-                    "name : ${  onsession.get(0)!!.name.toString()   } \n" +
-                    "email : ${  onsession.get(0)!!.email.toString()   } \n"
-
+            txt_api_res!!.text =  ""
+//                    "Token recieve :  NO TOKEN  "+"\n" +
+//                    "id : ${  onsession.get(0)!!.id.toString()  } \n" +
+//                    "user_level : ${  onsession.get(0)!!.user_level.toString()   } \n" +
+//                    "name : ${  onsession.get(0)!!.name.toString()   } \n" +
+//                    "email : ${  onsession.get(0)!!.email.toString()   } \n"
 
         return _view
     }

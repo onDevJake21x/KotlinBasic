@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -14,36 +13,32 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import org.jetbrains.anko.indeterminateProgressDialog
-import org.jetbrains.anko.longToast
 import org.json.JSONObject
 import com.android.volley.toolbox.StringRequest
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import org.jetbrains.anko.alert
 import java.util.*
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
-import android.os.SystemClock
-import com.example.jake21x.kotlinbasic.realm.Session
-import com.example.jake21x.kotlinbasic.realm.Tasks
-import com.example.jake21x.kotlinbasic.services.AppBroadcast
-import com.example.jake21x.kotlinbasic.services.AppLogger
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.jake21x.kotlinbasic.model.Session
+import com.example.jake21x.kotlinbasic.services.AppBroadCast
 import java.text.SimpleDateFormat
+import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.toast
+
 
 class MainActivity : AppCompatActivity() {
 
     //private val URL = "http://188.166.233.193/api/login"
     private val URL = "http://128.199.125.45/api/login"
-    var realm:Realm?= null;
+
+    var appdb: Db? = null
+    var db: SQLiteDatabase? = null
+    var mContext: Context? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        database_init();
 
         // get reference to button
         val btn_register = findViewById<TextView>(R.id.link_signup);
@@ -53,8 +48,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this,"Register" , Toast.LENGTH_SHORT).show();
         }
 
-
-
+        appdb = Db(this)
     }
 
     fun btn_login(view: View){
@@ -96,61 +90,12 @@ class MainActivity : AppCompatActivity() {
 
                           val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-                          val intent = Intent(this@MainActivity , AppBroadcast::class.java);
+                          val intent = Intent(this@MainActivity , AppBroadCast::class.java);
                           intent.putExtra("msg" , "Logger fire!");
                           intent.action = "com.example.jake21x.kotlinbasic";
                           val pendIntent = PendingIntent.getBroadcast(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
 
                           alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 1000 , pendIntent);
-
-
-
-
-
-                            var onsession = realm!!.where(Session::class.java).findAll();
-                            if(!onsession.isEmpty()){
-
-                                realm!!.beginTransaction();
-                                realm!!.deleteAll();
-                                realm!!.commitTransaction();
-
-                                var pk: Long = 1
-                                if (realm!!.where(Session::class.java).max("pk") != null) {
-                                    pk = realm!!.where(Session::class.java).max("pk") as Long + 1
-                                }
-
-                                realm!!.beginTransaction();
-                                val db = realm!!.createObject(Session::class.java, pk)
-
-                                db.id  =  JSONObject(JSONObject(response).toString())["id"].toString()
-                                db.name  =  JSONObject(JSONObject(response).toString())["name"].toString()
-                                db.email  =  JSONObject(JSONObject(response).toString())["email"].toString()
-                                db.user_level  =  JSONObject(JSONObject(response).toString())["user_level"].toString()
-                                db.password  = password.text.toString();
-                                db.onsession  = "LoggedIn";
-                                db.token  = "none";
-
-                                realm!!.commitTransaction();
-
-                            }else{
-                                var pk: Long = 1
-                                if (realm!!.where(Session::class.java).max("pk") != null) {
-                                    pk = realm!!.where(Session::class.java).max("pk") as Long + 1
-                                }
-
-                                realm!!.beginTransaction();
-                                val db = realm!!.createObject(Session::class.java, pk)
-
-                                db.id  =  JSONObject(JSONObject(response).toString())["id"].toString()
-                                db.name  =  JSONObject(JSONObject(response).toString())["name"].toString()
-                                db.email  =  JSONObject(JSONObject(response).toString())["email"].toString()
-                                db.user_level  =  JSONObject(JSONObject(response).toString())["user_level"].toString()
-                                db.password  = password.text.toString();
-                                db.onsession  = "LoggedIn";
-                                db.token  = "none";
-
-                                realm!!.commitTransaction();
-                            }
 
 //                        val intent = Intent(getContext().getApplicationContext(), AppLogger::class.java);
 //                        val pintent = PendingIntent.getService(getContext().getApplicationContext(), 0, intent, 0);
@@ -229,9 +174,4 @@ class MainActivity : AppCompatActivity() {
         }.show();
     }
 
-    fun database_init(){
-        Realm.init(this);
-        val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
-    }
 }

@@ -15,9 +15,7 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.realm.Users
-import io.realm.Realm
-import io.realm.RealmConfiguration
+import com.example.jake21x.kotlinbasic.model.Users
 import kotlinx.android.synthetic.main.activity_add_edit_user.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.onClick
@@ -34,7 +32,6 @@ class AddEditUserActivity : AppCompatActivity() {
     lateinit var input_contact:EditText
     lateinit var input_address:EditText
     lateinit var input_birthday:EditText
-    lateinit var realm:Realm;
 
     val CAMERA_REQUEST_CODE = 1
     var imageFilePath: String?=null;
@@ -50,9 +47,6 @@ class AddEditUserActivity : AppCompatActivity() {
        input_contact = findViewById<EditText>(R.id.input_contact);
        input_address = findViewById<EditText>(R.id.input_address);
        input_birthday = findViewById<EditText>(R.id.input_birthday);
-
-        val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
 
         setupToolBar();
 
@@ -199,7 +193,7 @@ class AddEditUserActivity : AppCompatActivity() {
                     !input_contact.text.toString().equals("") &&
                     !input_email.text.toString().equals("")  ){
 
-                    store_user(realm);
+                    //store_user(realm);
 
                 }else{
                     alert {
@@ -222,38 +216,17 @@ class AddEditUserActivity : AppCompatActivity() {
     }
 
 
-    fun store_user(realm:Realm){
+    fun store_user(){
 
         alert {
 
             title("Saving User..");
             message("Are you usre you want to save user?");
             positiveButton("Yes") {
-                var pk: Long = 1
-                if (realm.where(Users::class.java).max("pk") != null) {
-                    pk = realm.where(Users::class.java).max("pk") as Long + 1
-                }
+
+                // save now
 
 
-                realm.beginTransaction();
-                val db = realm.createObject(Users::class.java, pk)
-
-                db.id  = pk.toString();
-                db.username  = input_name.text.toString();
-                db.address  = input_address.text.toString();
-                db.contact  = input_contact.text.toString();
-                db.email  = input_email.text.toString();
-                db.position  = "HomeBase Programmer";
-                db.birthday  = input_birthday.text.toString();
-
-                if(imageFilePath != null){
-                    db.photo  = captured!!.absolutePath.toString() ;
-                }else{
-                    db.photo  = null;
-                }
-
-                realm.commitTransaction();
-                inputClear();
                 dismiss();
                 setResult(1);
                 overridePendingTransition(R.anim.stay,R.anim.push_down_from_up);

@@ -1,15 +1,9 @@
-package com.example.jake21x.kotlinbasic.realm
-
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
+package com.example.jake21x.kotlinbasic.model
 
 /**
  * Created by Jake21x on 11/22/2017.
  */
-@RealmClass
 open class Tasks(
-        @PrimaryKey var pk:Long? = 0,
         var id:String? = null,
         var user:String? = null,
         var remarks:String? = null,
@@ -20,7 +14,6 @@ open class Tasks(
         var tasktype:String? = null,
         var starttime:String? = null,
         var endtime:String? = null,
-        var client:String? = null
-    ):RealmObject(){
-
-    }
+        var client:String? = null,
+        var status:String? = "unsync"
+    )

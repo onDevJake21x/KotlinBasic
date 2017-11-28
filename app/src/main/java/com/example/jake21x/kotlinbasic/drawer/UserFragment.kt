@@ -16,15 +16,12 @@ import android.view.ViewGroup
 import android.widget.*
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.drawer.activities.AddEditUserActivity
-import com.example.jake21x.kotlinbasic.realm.Users
-import io.realm.Realm
-import io.realm.RealmConfiguration
+import com.example.jake21x.kotlinbasic.model.Users
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import java.util.*
-import io.realm.RealmResults
 import android.graphics.*
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
@@ -46,9 +43,6 @@ class UserFragment : Fragment() {
     var user_code:Int = 1;
     var _view:View?=null;
 
-    var realm:Realm?=null;
-    var config:RealmConfiguration?=null;
-
     var liinear_no_user: LinearLayout?=null;
 
     var linearLayoutManager: LinearLayoutManager?=null;
@@ -64,8 +58,6 @@ class UserFragment : Fragment() {
             mParam2 = arguments.getString(ARG_PARAM2)
         }
 
-        config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-        realm = Realm.getInstance(config);
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -102,33 +94,31 @@ class UserFragment : Fragment() {
 
 
 
-    fun getUsers(realm:Realm) : RealmResults<Users>{
-        return realm.where(Users::class.java).findAll()
-    }
+
 
 
     fun refreshList() {
 
-        linearLayoutManager = LinearLayoutManager(activity);
-
-        recyclerView!!.layoutManager = linearLayoutManager
-        recyclerView!!.hasFixedSize();
-
-//        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
-//        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
-//        divider.set
-//        recyclerView!!.addItemDecoration(divider)
-
-        val list = ArrayList(getUsers(realm!!));
-
-        if(list.size != 0 ){
-           liinear_no_user!!.setVisibility(GONE);
-        }else{
-            liinear_no_user!!.setVisibility(VISIBLE);
-        }
-
-        adapter = CustomAdapter(activity,list)
-        recyclerView!!.adapter = adapter
+//        linearLayoutManager = LinearLayoutManager(activity);
+//
+//        recyclerView!!.layoutManager = linearLayoutManager
+//        recyclerView!!.hasFixedSize();
+//
+////        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
+////        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
+////        divider.set
+////        recyclerView!!.addItemDecoration(divider)
+//
+//        val list = ArrayList();
+//
+//        if(list.size != 0 ){
+//           liinear_no_user!!.setVisibility(GONE);
+//        }else{
+//            liinear_no_user!!.setVisibility(VISIBLE);
+//        }
+//
+//        adapter = CustomAdapter(activity,list)
+//        recyclerView!!.adapter = adapter
 
     }
 
@@ -182,8 +172,6 @@ class UserFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
             val item :Users = UsersList[position]
             val context : Context = context;
-            val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-            val realm = Realm.getInstance(config);
 
             holder!!.txt_name.text = item.username
             holder!!.txt_email.text = item.email
@@ -206,11 +194,6 @@ class UserFragment : Fragment() {
 
                         UsersList.remove(item);
                         notifyDataSetChanged();
-
-                        realm.beginTransaction()
-                        val messageobj = realm.where(Users::class.java).contains("id", item.id.toString()).findAll()
-                        messageobj.deleteAllFromRealm()
-                        realm.commitTransaction();
 
                         dismiss()
                     }

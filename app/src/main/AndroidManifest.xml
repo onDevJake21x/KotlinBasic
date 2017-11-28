@@ -43,8 +43,8 @@
             android:name=".drawer.activities.AddEditTaskActivity">
         </activity>
 
-        <!--<service android:name="com.example.jake21x.kotlinbasic.services.AppLogger" />-->
-        <receiver android:name=".services.AppBroadcast" />
+        <service android:name=".services.AppLogger" />
+        <receiver android:name=".services.AppBroadCast" />
 
         <provider
             android:authorities="${applicationId}.fileprovider"
