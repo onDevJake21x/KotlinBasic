@@ -1,7 +1,6 @@
 package com.example.jake21x.kotlinbasic.drawer
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -10,25 +9,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.drawer.activities.AddEditUserActivity
-import com.example.jake21x.kotlinbasic.realm.Users
+import org.jetbrains.anko.find
+import java.util.*
+import com.example.jake21x.kotlinbasic.realm.Logs
+import com.example.jake21x.kotlinbasic.realm.Session
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.find
-import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
-import java.util.*
-import io.realm.RealmResults
-import android.graphics.*
-import com.amulyakhare.textdrawable.TextDrawable
-import com.amulyakhare.textdrawable.util.ColorGenerator
-import com.example.jake21x.kotlinbasic.realm.Logs
 
 
 /**
@@ -46,12 +35,12 @@ class LogsFragment : Fragment() {
 
     var _view:View?=null;
 
-    var realm:Realm?=null;
-    var config:RealmConfiguration?=null;
-
     var linearLayoutManager: LinearLayoutManager?=null;
     var recyclerView: RecyclerView?=null;
     var adapter: CustomAdapter?=null;
+
+    var realm: Realm?=null;
+    var config: RealmConfiguration?=null;
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -64,6 +53,7 @@ class LogsFragment : Fragment() {
 
         config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
         realm = Realm.getInstance(config);
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -71,8 +61,25 @@ class LogsFragment : Fragment() {
         // Inflate the layout for this fragment
         _view = inflater!!.inflate(R.layout.fragment_logs, container, false)
 
-        recyclerView = _view!!.find<RecyclerView>(R.id.logs_recycler_list);
+        var onsession =  realm!!.where(Session::class.java).findAll();
+        val txt_session_id = _view!!.find<TextView>(R.id.txt_session_id);
+        txt_session_id.setText("Id: "+onsession.get(0)!!.id)
+        val txt_session_name = _view!!.find<TextView>(R.id.txt_session_name);
+        txt_session_name.setText("Name: "+onsession.get(0)!!.name)
+        val txt_session_email = _view!!.find<TextView>(R.id.txt_session_email);
+        txt_session_email.setText("Email: "+onsession.get(0)!!.email)
+        val txt_session_password = _view!!.find<TextView>(R.id.txt_session_password);
+        txt_session_password.setText("Password: "+onsession.get(0)!!.password)
+        val txt_session_token = _view!!.find<TextView>(R.id.txt_session_token);
+        txt_session_token.setText("Token: "+onsession.get(0)!!.token);
 
+
+        val fab = _view!!.find<FloatingActionButton>(R.id.fab);
+        fab.setOnClickListener{
+            refreshList();
+        }
+
+        recyclerView = _view!!.find<RecyclerView>(R.id.logs_recycler_list);
 
         refreshList();
         return _view
@@ -80,29 +87,22 @@ class LogsFragment : Fragment() {
 
 
 
-
-
-    fun getUsers(realm:Realm) : RealmResults<Logs>{
-        return realm.where(Logs::class.java).findAll()
-    }
-
-
     fun refreshList() {
 
-        linearLayoutManager = LinearLayoutManager(activity);
-
-        recyclerView!!.layoutManager = linearLayoutManager
-        recyclerView!!.hasFixedSize();
-
-//        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
-//        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
-//        divider.set
-//        recyclerView!!.addItemDecoration(divider)
-
-        val list = ArrayList(getUsers(realm!!));
-
-        adapter = CustomAdapter(activity,list)
-        recyclerView!!.adapter = adapter
+//        linearLayoutManager = LinearLayoutManager(activity);
+//
+//        recyclerView!!.layoutManager = linearLayoutManager
+//        recyclerView!!.hasFixedSize();
+//
+////        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
+////        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
+////        divider.set
+////        recyclerView!!.addItemDecoration(divider)
+//
+//        val list = ArrayList(getAll(realm!!));
+//
+//        adapter = CustomAdapter(activity,list)
+//        recyclerView!!.adapter = adapter
 
     }
 
@@ -154,14 +154,15 @@ class LogsFragment : Fragment() {
     class CustomAdapter( val context:Context ,val LogsList : ArrayList<Logs>):RecyclerView.Adapter<CustomAdapter.ViewHolder>()  {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-            val item :Logs = LogsList[position]
-            val context : Context = context;
-            val config = RealmConfiguration.Builder().name("kotlinbasic").deleteRealmIfMigrationNeeded().build();
-            val realm = Realm.getInstance(config);
 
-            holder!!.txt_name.text = item.id
-            holder!!.txt_email.text = item.user
+            val item : Logs = LogsList[position]
 
+            holder!!.txt_log_id.text = item.id;
+            holder!!.txt_log_user_id.text = item.user;
+            holder!!.txt_log_date.text = item.date;
+            holder!!.txt_log_time.text = item.time;
+            holder!!.txt_log_battery.text = item.battery;
+            holder!!.txt_log_status.text = item.status;
 
         }
 
@@ -169,38 +170,20 @@ class LogsFragment : Fragment() {
             return LogsList.size
         }
 
-        fun getInitials(name: String?): String {
-            val initials = StringBuilder()
-            var addNext = true
-            if (name != null) {
-                for (i in 0 until name.length) {
-                    val c = name[i]
-                    if (c == ' ' || c == '-' || c == '.') {
-                        addNext = true
-                    } else if (addNext) {
-                        initials.append(c)
-                        addNext = false
-                    }
-                }
-            }
-            return initials.toString()
-        }
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-            val v = LayoutInflater.from(parent?.context).inflate(R.layout.user_item_onlist,parent,false);
+            val v = LayoutInflater.from(parent?.context).inflate(R.layout.logs_item_onlist,parent,false);
             return ViewHolder(v);
         }
 
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val txt_name = itemView.find<TextView>(R.id.txt_name);
-            val txt_email = itemView.find<TextView>(R.id.txt_email);
+            val txt_log_id = itemView.find<TextView>(R.id.txt_id);
+            val txt_log_user_id = itemView.find<TextView>(R.id.txt_log_user_id);
+            val txt_log_date = itemView.find<TextView>(R.id.txt_log_date);
+            val txt_log_time = itemView.find<TextView>(R.id.txt_log_time);
+            val txt_log_battery = itemView.find<TextView>(R.id.txt_log_battery);
+            val txt_log_status = itemView.find<TextView>(R.id.txt_log_status);
         }
     }
 
 }// Required empty public constructor
-
-
-
-
-
-

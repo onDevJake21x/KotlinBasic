@@ -96,16 +96,10 @@ class MainActivity : AppCompatActivity() {
 
                           val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-                          val intent = Intent(this@MainActivity , AppBroadcast::class.java);
-                          intent.putExtra("msg" , "Logger fire!");
-                          intent.action = "com.example.jake21x.kotlinbasic";
-                          val pendIntent = PendingIntent.getBroadcast(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
+                          val intent = Intent(this@MainActivity , AppLogger::class.java);
+                          val pendIntent = PendingIntent.getService(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
 
-                          alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 1000 , pendIntent);
-
-
-
-
+                          alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 500 , pendIntent);
 
                             var onsession = realm!!.where(Session::class.java).findAll();
                             if(!onsession.isEmpty()){
