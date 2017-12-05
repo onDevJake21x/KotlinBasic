@@ -24,6 +24,7 @@ import com.example.jake21x.kotlinbasic.model.Session
 import com.example.jake21x.kotlinbasic.services.AppBroadCast
 import java.text.SimpleDateFormat
 import android.database.sqlite.SQLiteDatabase
+import com.example.jake21x.kotlinbasic.services.AppLogger
 import org.jetbrains.anko.toast
 
 
@@ -32,9 +33,8 @@ class MainActivity : AppCompatActivity() {
     //private val URL = "http://188.166.233.193/api/login"
     private val URL = "http://128.199.125.45/api/login"
 
-    var appdb: Db? = null
-    var db: SQLiteDatabase? = null
-    var mContext: Context? = null
+
+    var mContext: Context? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this,"Register" , Toast.LENGTH_SHORT).show();
         }
 
-        appdb = Db(this)
+        val db = Db.Instance(this);
+        db.writableDatabase
     }
 
     fun btn_login(view: View){
@@ -90,12 +91,12 @@ class MainActivity : AppCompatActivity() {
 
                           val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-                          val intent = Intent(this@MainActivity , AppBroadCast::class.java);
-                          intent.putExtra("msg" , "Logger fire!");
-                          intent.action = "com.example.jake21x.kotlinbasic";
-                          val pendIntent = PendingIntent.getBroadcast(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
+                          val intent = Intent(this@MainActivity , AppLogger::class.java);
+                          //intent.putExtra("msg" , "Logger fire!");
+                          //intent.action = "com.example.jake21x.kotlinbasic";
+                          val pendIntent = PendingIntent.getService(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
 
-                          alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 1000 , pendIntent);
+                          alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 500 , pendIntent);
 
 //                        val intent = Intent(getContext().getApplicationContext(), AppLogger::class.java);
 //                        val pintent = PendingIntent.getService(getContext().getApplicationContext(), 0, intent, 0);
@@ -106,20 +107,16 @@ class MainActivity : AppCompatActivity() {
 //                        //webView.getContext().startService(new Intent(webView.getContext().getApplicationContext(), Logger.class));
 
                     }else{
-                        alert {
-                            title("Login Failed!");
-                            message(response?.toString())
+                        alert(title = "Login Failed!" ,  message = response?.toString() ) {
                             positiveButton("OK") { dismiss() }
-                            cancellable(false)
+                            setCancelable(false)
                         }.show();
                     }
 
                 }else{
-                    alert {
-                        title("Login Failed!");
-                        message("Please check your account & data connection.")
+                    alert(title = "Login Failed!",  message = "Please check your account & data connection.") {
                         positiveButton("OK") { dismiss() }
-                        cancellable(false)
+                        setCancelable(false)
                     }.show();
                 }
 
@@ -127,11 +124,9 @@ class MainActivity : AppCompatActivity() {
                     Response.ErrorListener {
                         // error
                         dismiss()
-                        alert {
-                            title("Login Failed!");
-                            message("Please check data connection.")
+                        alert(title = "Login Failed!" , message= "Please check data connection.") {
                             positiveButton("OK") { dismiss() }
-                            cancellable(false)
+                            setCancelable(false)
                         }.show();
                         Log.d("ErrorResponse", response.toString())
                     }
@@ -163,14 +158,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        alert {
-           title("Exit Application.");
-           message("Are you sure you want to Exit?");
+        alert(title = "Exit Application.",message = "Are you sure you want to Exit?") {
            positiveButton("Yes") {
                 finish();
            }
            negativeButton("No") {  }
-           cancellable(false);
         }.show();
     }
 

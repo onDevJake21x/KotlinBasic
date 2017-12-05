@@ -149,7 +149,7 @@ class LogsFragment : Fragment() {
 
             val item :Logs = LogsList[position]
 
-            holder!!.txt_log_id.text = item.id;
+            holder!!.txt_log_id.text = item.id.toString();
             holder!!.txt_log_user_id.text = item.user_id;
             holder!!.txt_log_date.text = item.created_date;
             holder!!.txt_log_time.text = item.created_time;

@@ -220,10 +220,10 @@ class AddEditTaskActivity  : AppCompatActivity() {
 //                    store_user(realm);
 
                 }else{
-                    alert {
-                        title("Not Valid Input");
-                        message("Sorry please enter a valid inputs only.");
-                        positiveButton("OK") { dismiss() }
+                    alert(title = "Not Valid Input" , message = "Sorry please enter a valid inputs only.") {
+                        positiveButton("OK") {
+                          dismiss()
+                        }
                     }.show();
                 }
 

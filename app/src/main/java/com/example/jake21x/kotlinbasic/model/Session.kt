@@ -3,13 +3,26 @@ package com.example.jake21x.kotlinbasic.model
 /**
  * Created by Jake21x on 11/22/2017.
  */
- open class Session(
-        var id:String? = null,
-        var user_id:String? = null,
-        var token:String? = null,
-        var email:String? = null,
-        var name:String? = null,
-        var password:String? = null,
-        var onsession:String? = null,
-        var user_level:String? = null
-    )
+ data class Session(
+        var id:Int? = null,
+        var user_id:String ,
+        var token:String ,
+        var email:String ,
+        var name:String ,
+        var password:String ,
+        var onsession:String ,
+        var user_level:String
+    ){
+
+   companion object {
+       val TABLE_NAME = "session"
+       var id  = "id"
+       var user_id = "user_id"
+       var token = "token"
+       var email  = "email"
+       var name  = "name"
+       var password  = "password"
+       var onsession = "onsession"
+       var user_level  = "user_level"
+   }
+}
