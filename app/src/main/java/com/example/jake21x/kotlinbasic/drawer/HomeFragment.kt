@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.jake21x.kotlinbasic.Db
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.model.Session
 import org.jetbrains.anko.find
@@ -30,6 +31,8 @@ class HomeFragment : Fragment() {
     var txt_api_res:TextView?=null;
 
 
+    var DbStore:Db ? = null
+
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +41,9 @@ class HomeFragment : Fragment() {
             data = arguments.getString(ARG_PARAM)
             //activity.longToast(data.toString());
         }
+
+        DbStore = Db.Instance(activity);
+        DbStore!!.writableDatabase
 
     }
 
@@ -48,12 +54,12 @@ class HomeFragment : Fragment() {
         txt_api_res = _view!!.find<TextView>(R.id.txt_api_res);
 
 
-            txt_api_res!!.text =  ""
-//                    "Token recieve :  NO TOKEN  "+"\n" +
-//                    "id : ${  onsession.get(0)!!.id.toString()  } \n" +
-//                    "user_level : ${  onsession.get(0)!!.user_level.toString()   } \n" +
-//                    "name : ${  onsession.get(0)!!.name.toString()   } \n" +
-//                    "email : ${  onsession.get(0)!!.email.toString()   } \n"
+            txt_api_res!!.text =  ""+
+                    "Token recieve :  NO TOKEN  "+"\n" +
+                    "id : ${  DbStore!!.getSession(DbStore!!)[0].user_id.toString()  } \n" +
+                    "user_level : ${  DbStore!!.getSession(DbStore!!)[0].user_level.toString()   } \n" +
+                    "name : ${  DbStore!!.getSession(DbStore!!)[0].name.toString()   } \n" +
+                    "email : ${  DbStore!!.getSession(DbStore!!)[0].email.toString()   } \n"
 
         return _view
     }

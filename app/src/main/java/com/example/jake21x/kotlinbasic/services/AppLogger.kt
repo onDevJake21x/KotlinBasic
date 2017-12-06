@@ -10,7 +10,6 @@ import android.widget.Toast
 import com.example.jake21x.kotlinbasic.Db
 import com.example.jake21x.kotlinbasic.model.Logs
 import com.example.jake21x.kotlinbasic.model.Session
-import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
 import java.util.*

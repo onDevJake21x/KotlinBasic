@@ -21,10 +21,10 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import com.example.jake21x.kotlinbasic.model.Session
-import com.example.jake21x.kotlinbasic.services.AppBroadCast
 import java.text.SimpleDateFormat
-import android.database.sqlite.SQLiteDatabase
 import com.example.jake21x.kotlinbasic.services.AppLogger
+import org.jetbrains.anko.db.delete
+import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.toast
 
 
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
 
     var mContext: Context? = null;
+    var DbStore:Db ? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +49,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this,"Register" , Toast.LENGTH_SHORT).show();
         }
 
-        val db = Db.Instance(this);
-        db.writableDatabase
+        DbStore = Db.Instance(this);
+        DbStore!!.writableDatabase
     }
 
     fun btn_login(view: View){
@@ -72,8 +73,43 @@ class MainActivity : AppCompatActivity() {
                 response ->
                 if(response?.toString() != null){
 
-
                     if(response?.toString() != "Credentials Mismatch"){
+
+                        if(DbStore!!.getSession(DbStore!!).size == 0){
+                            DbStore!!.use {
+                                insert(Session.TABLE_NAME,
+                                        Session.user_id to JSONObject(response.toString())["id"].toString() ,
+                                        Session.name to JSONObject(response.toString())["name"].toString(),
+                                        Session.email to JSONObject(response.toString())["email"].toString(),
+                                        Session.user_level to JSONObject(response.toString())["user_level"].toString(),
+                                        Session.password to password.text.toString(),
+                                        Session.onsession to "loggedIn",
+                                        Session.token to "none"
+                                )
+                            }
+
+                            toast("is Empty true . just insert")
+                        }else{
+                            DbStore!!.use {
+                                delete(Session.TABLE_NAME);
+
+                                insert(Session.TABLE_NAME,
+                                        Session.user_id to JSONObject(response.toString())["id"].toString() ,
+                                        Session.name to JSONObject(response.toString())["name"].toString(),
+                                        Session.email to JSONObject(response.toString())["email"].toString(),
+                                        Session.user_level to JSONObject(response.toString())["user_level"].toString(),
+                                        Session.password to password.text.toString(),
+                                        Session.onsession to "loggedIn",
+                                        Session.token to "none"
+                                )
+                            };
+
+                            toast("is Empty false,. clear table first")
+                        }
+
+
+
+
 
                         intent.putExtra("password", password.text.toString())
                         intent.putExtra("data", JSONObject(response).toString())

@@ -5,7 +5,7 @@ package com.example.jake21x.kotlinbasic.model
  */
 
 data class Logs(
-        val id: Int,
+        val id: String,
         val user_id: String,
         val battery: String,
         val created_date: String,

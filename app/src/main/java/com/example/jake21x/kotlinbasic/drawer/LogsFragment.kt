@@ -1,5 +1,6 @@
 package com.example.jake21x.kotlinbasic.drawer
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -11,11 +12,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.example.jake21x.kotlinbasic.Db
 import com.example.jake21x.kotlinbasic.R
 import org.jetbrains.anko.find
 import java.util.*
 import com.example.jake21x.kotlinbasic.model.Logs
 import com.example.jake21x.kotlinbasic.model.Session
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -37,6 +41,8 @@ class LogsFragment : Fragment() {
     var recyclerView: RecyclerView?=null;
     var adapter: CustomAdapter?=null;
 
+    var DbStore:Db ? = null
+
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +52,9 @@ class LogsFragment : Fragment() {
             mParam2 = arguments.getString(ARG_PARAM2)
         }
 
+        DbStore = Db.Instance(activity);
+        DbStore!!.writableDatabase
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -53,18 +62,16 @@ class LogsFragment : Fragment() {
         // Inflate the layout for this fragment
         _view = inflater!!.inflate(R.layout.fragment_logs, container, false)
 
-//        var onsession =  realm!!.where(Session::class.java).findAll();
-//        val txt_session_id = _view!!.find<TextView>(R.id.txt_session_id);
-//        txt_session_id.setText("Id: "+onsession.get(0)!!.id)
-//        val txt_session_name = _view!!.find<TextView>(R.id.txt_session_name);
-//        txt_session_name.setText("Name: "+onsession.get(0)!!.name)
-//        val txt_session_email = _view!!.find<TextView>(R.id.txt_session_email);
-//        txt_session_email.setText("Email: "+onsession.get(0)!!.email)
-//        val txt_session_password = _view!!.find<TextView>(R.id.txt_session_password);
-//        txt_session_password.setText("Password: "+onsession.get(0)!!.password)
-//        val txt_session_token = _view!!.find<TextView>(R.id.txt_session_token);
-//        txt_session_token.setText("Token: "+onsession.get(0)!!.token);
-
+        val txt_session_id = _view!!.find<TextView>(R.id.txt_session_id);
+        txt_session_id.setText("Id: "+DbStore!!.getSession(DbStore!!)[0].user_id)
+        val txt_session_name = _view!!.find<TextView>(R.id.txt_session_name);
+        txt_session_name.setText("Name: "+DbStore!!.getSession(DbStore!!)[0].name)
+        val txt_session_email = _view!!.find<TextView>(R.id.txt_session_email);
+        txt_session_email.setText("Email: "+DbStore!!.getSession(DbStore!!)[0].email)
+        val txt_session_password = _view!!.find<TextView>(R.id.txt_session_password);
+        txt_session_password.setText("Password: "+DbStore!!.getSession(DbStore!!)[0].password)
+        val txt_session_token = _view!!.find<TextView>(R.id.txt_session_token);
+        txt_session_token.setText("Token: "+DbStore!!.getSession(DbStore!!)[0].token);
 
         val fab = _view!!.find<FloatingActionButton>(R.id.fab);
         fab.setOnClickListener{
@@ -79,22 +86,24 @@ class LogsFragment : Fragment() {
 
 
 
+    @SuppressLint("NewApi")
     fun refreshList() {
 
-//        linearLayoutManager = LinearLayoutManager(activity);
-//
-//        recyclerView!!.layoutManager = linearLayoutManager
-//        recyclerView!!.hasFixedSize();
-//
-////        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
-////        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
-////        divider.set
-////        recyclerView!!.addItemDecoration(divider)
-//
-//        val list = ArrayList(getAll(realm!!));
-//
-//        adapter = CustomAdapter(activity,list)
-//        recyclerView!!.adapter = adapter
+        linearLayoutManager = LinearLayoutManager(activity);
+
+        recyclerView!!.layoutManager = linearLayoutManager
+        recyclerView!!.hasFixedSize();
+
+//        val divider = DividerItemDecoration(recyclerView!!.getContext(), DividerItemDecoration.VERTICAL)
+//        divider.setDrawable(ContextCompat.getDrawable(activity, R.drawable.divider))
+//        divider.set
+//        recyclerView!!.addItemDecoration(divider)
+
+        val list = ArrayList(DbStore!!.getLogs(DbStore!!));
+        Collections.reverse(list)
+
+        adapter = CustomAdapter(activity,list)
+        recyclerView!!.adapter = adapter
 
     }
 
