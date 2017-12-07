@@ -17,10 +17,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
+import com.example.jake21x.kotlinbasic.Db
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.drawer.activities.AddEditTaskActivity
 import com.example.jake21x.kotlinbasic.model.Tasks
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
@@ -51,6 +53,7 @@ class TaskFragment : Fragment() {
     var recyclerView: RecyclerView?=null;
     var adapter: TaskCustomAdapter?=null;
 
+    var DbStore:Db ? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -60,6 +63,9 @@ class TaskFragment : Fragment() {
             mParam1 = arguments.getString(ARG_PARAM1)
             mParam2 = arguments.getString(ARG_PARAM2)
         }
+
+        DbStore = Db.Instance(activity);
+        DbStore!!.writableDatabase
 
     }
 
@@ -98,21 +104,21 @@ class TaskFragment : Fragment() {
 
     fun refreshList() {
 
-//        linearLayoutManager = LinearLayoutManager(activity);
-//
-//        recyclerView!!.layoutManager = linearLayoutManager
-//        recyclerView!!.hasFixedSize();
-//
-//        val list = ArrayList(getUsers(realm!!));
-//
-//        if(list.size != 0 ){
-//            liinear_no_user!!.setVisibility(View.GONE);
-//        }else{
-//            liinear_no_user!!.setVisibility(View.VISIBLE);
-//        }
-//
-//        adapter = TaskCustomAdapter(activity,list);
-//        recyclerView!!.adapter = adapter
+        linearLayoutManager = LinearLayoutManager(activity);
+
+        recyclerView!!.layoutManager = linearLayoutManager
+        recyclerView!!.hasFixedSize();
+
+        val list = ArrayList(DbStore!!.getTasks(DbStore!!));
+
+        if(list.size != 0 ){
+            liinear_no_user!!.setVisibility(View.GONE);
+        }else{
+            liinear_no_user!!.setVisibility(View.VISIBLE);
+        }
+
+        adapter = TaskCustomAdapter(activity,list,DbStore!!);
+        recyclerView!!.adapter = adapter
 
     }
 
@@ -176,7 +182,7 @@ class TaskFragment : Fragment() {
         }
     }
 
-    class TaskCustomAdapter( val context:Context ,val TaskList : ArrayList<Tasks>): RecyclerView.Adapter<TaskCustomAdapter.ViewHolder>()  {
+    class TaskCustomAdapter( val context:Context ,val TaskList : ArrayList<Tasks> , val DbStore:Db): RecyclerView.Adapter<TaskCustomAdapter.ViewHolder>()  {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
 
@@ -205,6 +211,19 @@ class TaskFragment : Fragment() {
 
                         TaskList.remove(item);
                         notifyDataSetChanged();
+
+
+                        DbStore.use {
+//                             val result = delete(
+//                                     Tasks.TABLE_NAME,
+//                                     "${Tasks.id} = {id}" ,
+//                                     "2"
+//                                     ) > 0
+                            var res  = delete(Tasks.TABLE_NAME , "${Tasks.id} = ${item.id}");
+                            context.toast("res: "+res.toString())
+                        }
+
+
 
                         dismiss()
                     }
@@ -250,7 +269,7 @@ class TaskFragment : Fragment() {
             val txt_location = itemView.find<TextView>(R.id.txt_location);
             val btn_delete = itemView.find<ImageView>(R.id.btn_delete);
             val item_container = itemView.find<LinearLayout>(R.id.item_container);
-            val item_photoImageView = itemView.find<ImageView>(R.id.item_photoImageView);
+            val item_photoImageView = itemView.find<ImageView>(R.id.tasks_item_photoImageView);
         }
 
         fun setScaledBitmap(item_photoImageView: ImageView, imageFilePath:String): Bitmap {

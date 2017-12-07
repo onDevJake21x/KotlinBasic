@@ -5,7 +5,7 @@ package com.example.jake21x.kotlinbasic.model
  */
 open class Tasks(
         var id:String,
-        var user:String,
+        var user_id:String,
         var remarks:String,
         var long:String,
         var lat:String,
@@ -20,7 +20,7 @@ open class Tasks(
     companion object {
         val TABLE_NAME = "task"
         var id = "id"
-        var user  = "user"
+        var user_id  = "user_id"
         var remarks = "remarks"
         var long = "long"
         var lat  = "lat"

@@ -15,7 +15,6 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.model.Users
 import kotlinx.android.synthetic.main.activity_add_edit_user.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.onClick
@@ -65,7 +64,7 @@ class AddEditUserActivity : AppCompatActivity() {
         }
 
 
-        cameraButton.setOnClickListener {
+        retryButton.setOnClickListener {
             try {
                 val imageFile = createImageFile()
                 val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -103,7 +102,7 @@ class AddEditUserActivity : AppCompatActivity() {
                 }*/
                 if (resultCode == Activity.RESULT_OK) {
 
-                    item_photoImageView.setImageBitmap(setScaledBitmap())
+                    tasks_item_photoImageView.setImageBitmap(setScaledBitmap())
                 }
             }
             else -> {
@@ -125,8 +124,8 @@ class AddEditUserActivity : AppCompatActivity() {
     }
 
     fun setScaledBitmap(): Bitmap {
-        val imageViewWidth = item_photoImageView.width
-        val imageViewHeight = item_photoImageView.height
+        val imageViewWidth = tasks_item_photoImageView.width
+        val imageViewHeight = tasks_item_photoImageView.height
 
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true

@@ -1,5 +1,6 @@
 package com.example.jake21x.kotlinbasic
 
+import android.Manifest
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +21,10 @@ import java.util.*
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import com.example.jake21x.kotlinbasic.model.Session
 import java.text.SimpleDateFormat
 import com.example.jake21x.kotlinbasic.services.AppLogger
@@ -41,16 +46,57 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // get reference to button
-        val btn_register = findViewById<TextView>(R.id.link_signup);
-        // set on-click listener
-        btn_register.setOnClickListener {
-            // your code to perform when the user clicks on the button
-            Toast.makeText(this,"Register" , Toast.LENGTH_SHORT).show();
-        }
-
         DbStore = Db.Instance(this);
         DbStore!!.writableDatabase
+
+        // add permission if android version is greater then 23
+        if (Build.VERSION.SDK_INT < 23) {
+            //Do not need to check the permission
+
+        } else {
+            if (checkAndRequestPermissions()) {
+                //If you have already permitted the permission
+
+            } else {
+
+            }
+        }
+    }
+
+
+    private fun checkAndRequestPermissions(): Boolean {
+        val permissionCAMERA = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        val storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+
+        val listPermissionsNeeded = ArrayList<String>()
+        if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA)
+        }
+        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    listPermissionsNeeded.toTypedArray(), 33)
+            return false
+        }
+        return true
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            33 -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permission Granted Successfully. Write working code here.
+
+            } else {
+
+            }
+        }
     }
 
     fun btn_login(view: View){
@@ -88,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
 
-                            toast("is Empty true . just insert")
+                            //toast("is Empty true . just insert")
                         }else{
                             DbStore!!.use {
                                 delete(Session.TABLE_NAME);
@@ -104,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                                 )
                             };
 
-                            toast("is Empty false,. clear table first")
+                            //toast("is Empty false,. clear table first")
                         }
 
 

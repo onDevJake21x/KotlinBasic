@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import com.example.jake21x.kotlinbasic.R
@@ -237,7 +235,7 @@ class UserFragment : Fragment() {
             val txt_contact = itemView.find<TextView>(R.id.txt_contact);
             val btn_delete = itemView.find<ImageView>(R.id.btn_delete);
             val item_container = itemView.find<LinearLayout>(R.id.item_container);
-            val item_photoImageView = itemView.find<ImageView>(R.id.item_photoImageView);
+            val item_photoImageView = itemView.find<ImageView>(R.id.tasks_item_photoImageView);
         }
 
 

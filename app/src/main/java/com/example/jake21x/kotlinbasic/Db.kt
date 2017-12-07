@@ -22,6 +22,7 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
 
     var dbuser : Session? = null
     var dblogs : Logs? = null
+    var dbtask : Tasks? = null
 
     companion object {
         private var instance: Db? = null
@@ -64,7 +65,7 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
 
         database.createTable(Tasks.TABLE_NAME, true,
                 Tasks.id to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
-                Tasks.user to TEXT,
+                Tasks.user_id to TEXT,
                 Tasks.remarks to TEXT,
                 Tasks.long to TEXT,
                 Tasks.lat to TEXT,
@@ -165,6 +166,44 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
             })
         }
         return loggedin
+    }
+
+    fun getTasks(db:ManagedSQLiteOpenHelper) : List<Tasks>{
+        val tasklist = db.use {
+            select(Tasks.TABLE_NAME).parseList(object :org.jetbrains.anko.db.MapRowParser<Tasks>{
+                override fun parseRow(columns: Map<String, Any>): Tasks {
+
+                    val id = columns.getValue("id");
+                    val user_id = columns.getValue("user_id");
+                    val remarks = columns.getValue("remarks");
+                    val long = columns.getValue("long");
+                    val lat = columns.getValue("lat");
+                    val date = columns.getValue("date");
+                    val time = columns.getValue("time");
+                    val starttime = columns.getValue("starttime");
+                    val endtime = columns.getValue("endtime");
+                    val client = columns.getValue("client");
+                    val status = columns.getValue("status");
+
+                    dbtask = Tasks(
+                            id = id.toString(),
+                            user_id = user_id.toString(),
+                            remarks = remarks.toString(),
+                            long = long.toString(),
+                            lat = lat.toString(),
+                            date = date.toString(),
+                            time = time.toString(),
+                            starttime = starttime.toString(),
+                            endtime = endtime.toString(),
+                            client = client.toString(),
+                            status = status.toString()
+                    );
+                    return dbtask!!
+                }
+
+            })
+        }
+        return tasklist
     }
 
     fun getBattery(): Int {

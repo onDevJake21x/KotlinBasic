@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="15dp"
             android:src="@drawable/ktlogo" />
 
         <LinearLayout
@@ -27,6 +27,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -35,8 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textColorHint="@color/textSecondary"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:textColorHint="@color/textSecondary">
 
                 <EditText
                     android:id="@+id/input_email"
@@ -44,8 +45,8 @@
                     android:layout_height="wrap_content"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/textPrimary"
-                    android:text="glenn@gmail.com" />
+                    android:text="glenn@gmail.com"
+                    android:textColor="@color/textPrimary" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- Password Label -->
@@ -53,8 +54,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textColorHint="@color/textSecondary"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:textColorHint="@color/textSecondary">
 
 
                 <EditText
@@ -62,9 +63,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:textColor="@color/textPrimary"
                     android:inputType="textPassword"
-                    android:text="12345678" />
+                    android:text="12345678"
+                    android:textColor="@color/textPrimary" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -74,21 +75,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:layout_marginTop="24dp"
+                android:background="@color/colorPrimary"
                 android:onClick="btn_login"
                 android:padding="12dp"
-                android:textColor="@color/textColor"
-                android:background="@color/colorPrimary"
-                android:text="Login" />
-
-            <TextView
-                android:id="@+id/link_signup"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:textColor="@color/textSecondary"
-                android:text="No account yet? Create one"
-                android:textSize="16dip" />
+                android:text="Login"
+                android:textColor="@color/textColor" />
 
         </LinearLayout>
 

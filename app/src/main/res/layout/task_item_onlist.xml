@@ -3,21 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_list_row"
     android:clickable="true"
     android:focusable="true"
+    android:background="?attr/selectableItemBackground"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:paddingBottom="1dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingTop="1dp">
 
     <LinearLayout
         android:id="@+id/item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:clickable="true"
+        android:background="@drawable/item_background"
         android:orientation="vertical"
-        android:paddingLeft="72dp"
-        android:paddingRight="@dimen/padding_list_row">
+        android:paddingBottom="8dp"
+        android:paddingLeft="83dp"
+        android:paddingRight="@dimen/padding_list_row"
+        android:paddingTop="4dp">
 
         <TextView
             android:id="@+id/txt_client"
@@ -25,20 +29,23 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
             android:text="ABC Company"
             android:textColor="#000"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:src="@drawable/ic_calendar" />
 
             <TextView
@@ -48,8 +55,7 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="Dec 2 2017  at 4pm"
-                android:textColor="@color/message"
-                android:textSize="15sp" />
+                android:textColor="@color/message" />
             android:textSize="15sp" />
 
         </LinearLayout>
@@ -59,12 +65,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:src="@drawable/ic_timer" />
 
             <TextView
@@ -74,8 +81,7 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="30mins"
-                android:textColor="@color/message"
-                android:textSize="15sp" />
+                android:textColor="@color/message" />
 
         </LinearLayout>
 
@@ -84,12 +90,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:src="@drawable/ic_map" />
 
             <TextView
@@ -99,8 +106,7 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="100.00 , 100.00"
-                android:textColor="@color/message"
-                android:textSize="15sp" />
+                android:textColor="@color/message" />
 
 
         </LinearLayout>
@@ -109,42 +115,38 @@
 
     <RelativeLayout
         android:id="@+id/icon_container"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="231dp"
-        android:layout_marginRight="231dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="12dp"
         android:gravity="center"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/icon_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/tasks_item_photoImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
-
-            <ImageView
-                android:id="@+id/item_photoImageView"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:src="@drawable/ic_account" />
-
-        </RelativeLayout>
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_account" />
 
     </RelativeLayout>
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="75dp"
+        android:layout_height="90dp"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="10dp"
         android:scaleType="fitCenter">
@@ -152,15 +154,19 @@
         <ImageView
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:padding="10dp"
+            android:clickable="false"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_delete" />
 
         <ImageView
+            android:clickable="false"
             android:id="@+id/btn_sync"
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_sync" />

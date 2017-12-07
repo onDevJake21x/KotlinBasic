@@ -54,28 +54,28 @@ android:paddingTop="@dimen/padding_list_row">
 
 </LinearLayout>
 
-<RelativeLayout
-    android:id="@+id/icon_container"
-    android:layout_width="80dp"
-    android:layout_height="70dp"
-    android:gravity="center"
-    android:orientation="vertical">
-
     <RelativeLayout
-        android:id="@+id/icon_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:id="@+id/icon_container"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="70dp"
-            android:layout_height="90dp"
-            android:id="@+id/item_photoImageView"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_account" />
+        <RelativeLayout
+            android:id="@+id/icon_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/tasks_item_photoImageView"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_account" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
-</RelativeLayout>
 
 <ImageView
     android:id="@+id/btn_delete"

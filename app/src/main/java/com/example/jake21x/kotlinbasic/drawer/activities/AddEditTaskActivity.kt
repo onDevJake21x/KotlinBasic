@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.*
+import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -13,15 +14,21 @@ import android.support.v4.content.FileProvider
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.example.jake21x.kotlinbasic.Db
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.model.Tasks
+import com.example.jake21x.kotlinbasic.services.GPSTracker
 import com.google.android.gms.common.api.GoogleApiClient
 import kotlinx.android.synthetic.main.activity_add_edit_task.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -34,6 +41,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
     lateinit var input_date:EditText
     lateinit var input_time:EditText
     lateinit var input_remarks:EditText
+    lateinit var layout_second_option:LinearLayout
 
     lateinit var txt_location:TextView
 
@@ -43,6 +51,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
     var set_starttime: String?=null;
     var set_endtime: String?=null;
 
+    var DbStore: Db? = null
+    var gps:GPSTracker?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,30 +63,33 @@ class AddEditTaskActivity  : AppCompatActivity() {
         input_time = findViewById<EditText>(R.id.input_time);
         input_remarks = findViewById<EditText>(R.id.input_remarks);
 
+        layout_second_option = findViewById<LinearLayout>(R.id.layout_second_option);
+        layout_second_option.visibility = View.GONE
+
         txt_location = findViewById<TextView>(R.id.txt_location);
+
+        DbStore = Db.Instance(this);
+        DbStore!!.writableDatabase
+        gps = GPSTracker(this);
+
 
 
         setupToolBar();
 
-
-        val date = Date()
-        val dateFormat = SimpleDateFormat("yyyy/MM/dd");
-        input_date.setText(dateFormat.format(date).toString());
-
-
-        val timeFormat = SimpleDateFormat("hh:mm a")
-        input_time.setText(timeFormat.format(date).toString());
+        input_date.setText(SimpleDateFormat("MM/dd/yyyy").format(Date()).toString());
+        input_time.setText(SimpleDateFormat("hh:mm a").format(Date()).toString());
 
 
         //TODO this part is need to check and get first the values for editing ..
-        val timer = SimpleDateFormat("yyyy/MM/dd HH:mm")
         if(set_starttime == null){
             // new
-            set_starttime = timer.format(date).toString();
+            set_starttime = SimpleDateFormat("yyyy/MM/dd HH:mm").format(Date()).toString();
+            set_endtime = "";
         }else{
             // edit starttime and endtime must preserve
-            // for now if edit ..
+             //for now if edit ..
             // we need to call set_endtime = value from db .
+            set_endtime = SimpleDateFormat("yyyy/MM/dd HH:mm").format(Date()).toString();
         }
 
         input_date.onClick {
@@ -91,6 +104,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
 
             //show datepicker
             dpd.show()
+
         }
 
 
@@ -99,13 +113,23 @@ class AddEditTaskActivity  : AppCompatActivity() {
             val mm = SimpleDateFormat("mm")
 
             val dpt = TimePickerDialog(this, android.R.style.Theme_Material_Dialog, TimePickerDialog.OnTimeSetListener{ timePicker, hh, mm ->
-                input_time.setText(""+hh+":"+mm);
-            },hh.format(date).toInt(),mm.format(date).toInt(), false)
+
+
+                val time_now = "${hh}:${mm}"
+                val time = time_now
+                val sdf = SimpleDateFormat("HH:mm")
+                val dateObj = sdf.parse(time)
+                System.out.println(dateObj)
+                println(SimpleDateFormat("hh:mm a").format(dateObj))
+
+                input_time.setText(SimpleDateFormat("hh:mm a").format(dateObj));
+
+            },hh.format(Date()).toInt(),mm.format(Date()).toInt(), false)
             dpt.show();
         }
 
 
-        cameraButton.setOnClickListener {
+        retryButton.setOnClickListener {
             try {
                 val imageFile = createImageFile()
                 val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -123,7 +147,32 @@ class AddEditTaskActivity  : AppCompatActivity() {
         }
 
 
+
+        stablis_location()
+
+        retryButton.onClick {
+            stablis_location()
+            toast("Retrying ...")
+        }
+
+
     }
+
+
+    fun stablis_location(){
+        if(gps!!.canGetLocation){
+            txt_location.setText("Location: ${gps!!.longitude},${gps!!.latitude}")
+            linear_hasNoLocation.visibility = View.GONE;
+            cameraButton.visibility = View.GONE;
+
+        }else{
+            gps!!.showSettingsAlert();
+            txt_location.setText("Cannot stablish location!");
+            linear_hasNoLocation.visibility = View.VISIBLE;
+            cameraButton.visibility = View.VISIBLE;
+        }
+    }
+
 
     // Callbacks for Nearby Connection
     private inner class ConnectionCallbacks : GoogleApiClient.ConnectionCallbacks {
@@ -155,7 +204,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
                     photoImageView.setImageBitmap(data.extras.get("data") as Bitmap)
                 }*/
                 if (resultCode == Activity.RESULT_OK) {
-                    item_photoImageView.setImageBitmap(setScaledBitmap())
+                    tasks_item_photoImageView.setImageBitmap(setScaledBitmap())
                 }
             }
             else -> {
@@ -177,8 +226,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
     }
 
     fun setScaledBitmap(): Bitmap {
-        val imageViewWidth = item_photoImageView.width
-        val imageViewHeight = item_photoImageView.height
+        val imageViewWidth = tasks_item_photoImageView.width
+        val imageViewHeight = tasks_item_photoImageView.height
 
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
@@ -217,7 +266,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
                 if( !input_client.text.toString().equals("") &&
                     !input_remarks.text.toString().equals("")  ){
 
-//                    store_user(realm);
+                    store_user();
+                    toast( input_client.text.toString() + " , "+input_remarks.text.toString() )
 
                 }else{
                     alert(title = "Not Valid Input" , message = "Sorry please enter a valid inputs only.") {
@@ -249,17 +299,41 @@ class AddEditTaskActivity  : AppCompatActivity() {
             positiveButton("Yes") {
 
                 // save now
+                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
+                var use_end_time = "";
+                if(set_endtime == ""){
+                    use_end_time  = timeFormat.format(Date()).toString();
+                }else{
+                    use_end_time  = set_endtime!!.toString();
+                }
 
-//                db.tasktype  = "none";
-//
-//                db.starttime  = set_starttime;
-//
-//                val timeFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-//                if(set_endtime == null){
-//                    db.endtime  = timeFormat.format(Date()).toString();
-//                }else{
-//                    db.endtime  = set_endtime;
-//                }
+//                longToast(
+//                        DbStore!!.getSession(DbStore!!)[0].user_id.toString() + ","+
+//                                input_remarks.text.toString() + ","+
+//                                "0.0" + ","+
+//                                "0.0" + ","+
+//                                input_date.text.toString() + ","+
+//                                input_time.text.toString() + ","+
+//                                set_starttime.toString() + ","+
+//                                use_end_time.toString() + ","+
+//                                input_client.text.toString()
+//                )
+
+
+
+                DbStore!!.use {
+                  insert(Tasks.TABLE_NAME,
+                          Tasks.user_id to DbStore!!.getSession(DbStore!!)[0].user_id.toString(),
+                          Tasks.remarks to input_remarks.text.toString(),
+                          Tasks.long to "0.0",
+                          Tasks.lat to "0.0",
+                          Tasks.date to input_date.text.toString(),
+                          Tasks.time to input_time.text.toString(),
+                          Tasks.starttime to set_starttime.toString(),
+                          Tasks.endtime to use_end_time.toString(),
+                          Tasks.client to input_client.text.toString()
+                          )
+                }
 
                 inputClear();
                 dismiss();
@@ -283,4 +357,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
     }
 
 
+
+    companion object {
+        var getLocation:Location?=null;
+    }
 }
