@@ -1,5 +1,8 @@
 package com.example.jake21x.kotlinbasic
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -8,8 +11,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.jake21x.kotlinbasic.drawer.*
+import com.example.jake21x.kotlinbasic.services.AppLogger
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
+import org.jetbrains.anko.alert
+import android.view.KeyEvent.KEYCODE_BACK
+import android.R.attr.fragment
+
+
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -107,7 +116,21 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_logout -> {
+                alert(title = "Logout",message = "Are you sure you want to Logout?") {
+                    positiveButton("Yes") {
 
+                        val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+
+                        val intentForService = Intent(this@HomeActivity, AppLogger::class.java)
+
+                        val pendIntent = PendingIntent.getService(this@HomeActivity ,0 , intentForService , PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        alarm.cancel(pendIntent);
+
+                        finish();
+                    }
+                    negativeButton("No") {  }
+                }.show();
             }
         }
 

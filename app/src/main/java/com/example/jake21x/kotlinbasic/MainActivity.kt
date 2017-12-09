@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
@@ -28,9 +26,9 @@ import android.support.v4.content.ContextCompat
 import com.example.jake21x.kotlinbasic.model.Session
 import java.text.SimpleDateFormat
 import com.example.jake21x.kotlinbasic.services.AppLogger
+import com.example.jake21x.kotlinbasic.utils.Db
 import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
 
     var mContext: Context? = null;
-    var DbStore:Db ? = null
+    var DbStore: Db? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +99,26 @@ class MainActivity : AppCompatActivity() {
 
     fun btn_login(view: View){
 
+        var username = findViewById<EditText>(R.id.input_email)
+        var password = findViewById<EditText>(R.id.input_password)
+
+        if(DbStore!!.getSession(DbStore!!).size == 0){
+            httpLogin();
+        }else{
+            if(DbStore!!.getSession(DbStore!!)[0].email.equals(username.text.toString() , true) &&
+                    DbStore!!.getSession(DbStore!!)[0].password.equals(password.text.toString()) ){
+
+                val intent =  Intent(this,HomeActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+
+            }else{
+                httpLogin();
+            }
+        }
+    }
+
+    fun httpLogin(){
         val intent =  Intent(this,HomeActivity::class.java)
         var username = findViewById<EditText>(R.id.input_email)
         var password = findViewById<EditText>(R.id.input_password)
@@ -155,8 +173,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
                         intent.putExtra("password", password.text.toString())
                         intent.putExtra("data", JSONObject(response).toString())
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -164,21 +180,21 @@ class MainActivity : AppCompatActivity() {
                         dismiss();
 
 
-                          //TODO : Hour is not cleared if we need to use 12hr format or 24
-                          val cal = Calendar.getInstance();
-                          cal.set(Calendar.HOUR_OF_DAY, SimpleDateFormat("HH").format(Date()).toInt());
-                          cal.set(Calendar.MINUTE,SimpleDateFormat("mm").format(Date()).toInt());
-                          cal.set(Calendar.SECOND,0)
-                          //cal.set(Calendar.SECOND,SimpleDateFormat("ss").format(Date()).toInt())
+                        //TODO : Hour is not cleared if we need to use 12hr format or 24
+                        val cal = Calendar.getInstance();
+                        cal.set(Calendar.HOUR_OF_DAY, SimpleDateFormat("HH").format(Date()).toInt());
+                        cal.set(Calendar.MINUTE,SimpleDateFormat("mm").format(Date()).toInt());
+                        cal.set(Calendar.SECOND,0)
+                        //cal.set(Calendar.SECOND,SimpleDateFormat("ss").format(Date()).toInt())
 
-                          val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+                        val alarm = getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-                          val intent = Intent(this@MainActivity , AppLogger::class.java);
-                          //intent.putExtra("msg" , "Logger fire!");
-                          //intent.action = "com.example.jake21x.kotlinbasic";
-                          val pendIntent = PendingIntent.getService(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
+                        val intent = Intent(this@MainActivity , AppLogger::class.java);
+                        //intent.putExtra("msg" , "Logger fire!");
+                        //intent.action = "com.example.jake21x.kotlinbasic";
+                        val pendIntent = PendingIntent.getService(this@MainActivity ,0 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
 
-                          alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 500 , pendIntent);
+                        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.timeInMillis, 500 , pendIntent);
 
 //                        val intent = Intent(getContext().getApplicationContext(), AppLogger::class.java);
 //                        val pintent = PendingIntent.getService(getContext().getApplicationContext(), 0, intent, 0);
@@ -236,7 +252,6 @@ class MainActivity : AppCompatActivity() {
             setCancelable(false);
 
         }.show();
-
     }
 
     override fun onBackPressed() {

@@ -1,4 +1,4 @@
-package com.example.jake21x.kotlinbasic
+package com.example.jake21x.kotlinbasic.utils
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

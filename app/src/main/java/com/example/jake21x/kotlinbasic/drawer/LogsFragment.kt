@@ -1,25 +1,28 @@
 package com.example.jake21x.kotlinbasic.drawer
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.example.jake21x.kotlinbasic.Db
+import com.example.jake21x.kotlinbasic.utils.Db
 import com.example.jake21x.kotlinbasic.R
 import org.jetbrains.anko.find
 import java.util.*
 import com.example.jake21x.kotlinbasic.model.Logs
-import com.example.jake21x.kotlinbasic.model.Session
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.example.jake21x.kotlinbasic.services.AppLogger
+import org.jetbrains.anko.alert
 
 
 /**
@@ -41,7 +44,7 @@ class LogsFragment : Fragment() {
     var recyclerView: RecyclerView?=null;
     var adapter: CustomAdapter?=null;
 
-    var DbStore:Db ? = null
+    var DbStore: Db? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -77,6 +80,34 @@ class LogsFragment : Fragment() {
         fab.setOnClickListener{
             refreshList();
         }
+
+        _view!!.setFocusableInTouchMode(true)
+        _view!!.requestFocus()
+        _view!!.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    activity.alert(title = "Logout",message = "Are you sure you want to Logout?") {
+                        positiveButton("Yes") {
+
+                            val alarm = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+
+                            val intentForService = Intent(activity, AppLogger::class.java)
+
+                            val pendIntent = PendingIntent.getService(activity ,0 , intentForService , PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            alarm.cancel(pendIntent);
+
+                            activity.finish()
+                        }
+                        negativeButton("No") {  }
+                    }.show();
+
+                    return@OnKeyListener true
+                }
+            }
+            false
+        })
 
         recyclerView = _view!!.find<RecyclerView>(R.id.logs_recycler_list);
 

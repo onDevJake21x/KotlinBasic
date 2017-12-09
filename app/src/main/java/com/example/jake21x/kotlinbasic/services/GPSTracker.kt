@@ -44,6 +44,10 @@ class GPSTracker(private val mContext: Context) : Service(), LocationListener {
         getLocation()
     }
 
+    fun resetLocation(){
+        location = null
+    }
+
     @SuppressLint("MissingPermission")
     fun getLocation(): Location? {
         try {

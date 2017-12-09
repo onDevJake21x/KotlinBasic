@@ -19,16 +19,15 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.jake21x.kotlinbasic.Db
+import com.example.jake21x.kotlinbasic.PreviewActivity
+import com.example.jake21x.kotlinbasic.utils.Db
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.model.Tasks
 import com.example.jake21x.kotlinbasic.services.GPSTracker
 import com.google.android.gms.common.api.GoogleApiClient
 import kotlinx.android.synthetic.main.activity_add_edit_task.*
-import org.jetbrains.anko.alert
+import org.jetbrains.anko.*
 import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -71,8 +70,12 @@ class AddEditTaskActivity  : AppCompatActivity() {
         DbStore = Db.Instance(this);
         DbStore!!.writableDatabase
         gps = GPSTracker(this);
+        gps!!.resetLocation();
 
-
+//        indeterminateProgressDialog("Getting location ..."){
+//
+//            dismiss();
+//        }.show();
 
         setupToolBar();
 
@@ -129,7 +132,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
         }
 
 
-        retryButton.setOnClickListener {
+        cameraButton.setOnClickListener {
             try {
                 val imageFile = createImageFile()
                 val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -150,27 +153,54 @@ class AddEditTaskActivity  : AppCompatActivity() {
 
         stablis_location()
 
-        retryButton.onClick {
+        retryButton.setOnClickListener {
             stablis_location()
             toast("Retrying ...")
         }
 
-
+        val intent =  Intent(this, PreviewActivity::class.java)
+        startActivity(intent);
     }
 
 
     fun stablis_location(){
+
+        gps!!.getLocation()
+
         if(gps!!.canGetLocation){
-            txt_location.setText("Location: ${gps!!.longitude},${gps!!.latitude}")
-            linear_hasNoLocation.visibility = View.GONE;
-            cameraButton.visibility = View.GONE;
+
+            txt_location_label.setText("Your Location : ");
+            txt_location.setText("${gps!!.longitude},${gps!!.latitude}")
+
+
+            if(gps!!.longitude.toString() != "0.0"){
+
+                cameraButton.visibility = View.GONE;
+                retryButton.visibility = View.GONE;
+                linear_hasNoLocation.visibility = View.GONE;
+
+            }else{
+
+                txt_location_label.setText("Cannot stablish location!");
+                txt_location.setText("")
+                linear_hasNoLocation.visibility = View.VISIBLE;
+                cameraButton.visibility = View.VISIBLE;
+                retryButton.visibility = View.VISIBLE;
+            }
 
         }else{
+
             gps!!.showSettingsAlert();
-            txt_location.setText("Cannot stablish location!");
+            txt_location_label.setText("Cannot stablish location!");
+            txt_location.setText("")
             linear_hasNoLocation.visibility = View.VISIBLE;
             cameraButton.visibility = View.VISIBLE;
+            retryButton.visibility = View.VISIBLE;
         }
+    }
+
+    fun btn_save(view:View){
+        store_user();
     }
 
 
@@ -325,8 +355,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
                   insert(Tasks.TABLE_NAME,
                           Tasks.user_id to DbStore!!.getSession(DbStore!!)[0].user_id.toString(),
                           Tasks.remarks to input_remarks.text.toString(),
-                          Tasks.long to "0.0",
-                          Tasks.lat to "0.0",
+                          Tasks.long to gps!!.longitude,
+                          Tasks.lat to gps!!.latitude,
                           Tasks.date to input_date.text.toString(),
                           Tasks.time to input_time.text.toString(),
                           Tasks.starttime to set_starttime.toString(),

@@ -8,10 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.jake21x.kotlinbasic.Db
+import com.example.jake21x.kotlinbasic.utils.Db
 import com.example.jake21x.kotlinbasic.R
-import com.example.jake21x.kotlinbasic.model.Session
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.view.KeyEvent
+import android.content.Intent
+import com.example.jake21x.kotlinbasic.services.AppLogger
 
 
 /**
@@ -31,7 +36,7 @@ class HomeFragment : Fragment() {
     var txt_api_res:TextView?=null;
 
 
-    var DbStore:Db ? = null
+    var DbStore: Db? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -45,7 +50,10 @@ class HomeFragment : Fragment() {
         DbStore = Db.Instance(activity);
         DbStore!!.writableDatabase
 
+
+
     }
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -60,6 +68,34 @@ class HomeFragment : Fragment() {
                     "user_level : ${  DbStore!!.getSession(DbStore!!)[0].user_level.toString()   } \n" +
                     "name : ${  DbStore!!.getSession(DbStore!!)[0].name.toString()   } \n" +
                     "email : ${  DbStore!!.getSession(DbStore!!)[0].email.toString()   } \n"
+
+        _view!!.setFocusableInTouchMode(true)
+        _view!!.requestFocus()
+        _view!!.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    activity.alert(title = "Logout",message = "Are you sure you want to Logout?") {
+                        positiveButton("Yes") {
+
+                            val alarm = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+
+                            val intentForService = Intent(activity, AppLogger::class.java)
+
+                            val pendIntent = PendingIntent.getService(activity ,0 , intentForService , PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            alarm.cancel(pendIntent);
+
+                            activity.finish()
+                        }
+                        negativeButton("No") {  }
+                    }.show();
+
+                    return@OnKeyListener true
+                }
+            }
+            false
+        })
 
         return _view
     }
@@ -111,4 +147,5 @@ class HomeFragment : Fragment() {
             return fragment
         }
     }
+
 }// Required empty public constructor

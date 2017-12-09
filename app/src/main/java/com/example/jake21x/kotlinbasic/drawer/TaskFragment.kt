@@ -1,5 +1,7 @@
 package com.example.jake21x.kotlinbasic.drawer
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
@@ -9,6 +11,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,16 +20,20 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
-import com.example.jake21x.kotlinbasic.Db
+import com.example.jake21x.kotlinbasic.utils.Db
 import com.example.jake21x.kotlinbasic.R
 import com.example.jake21x.kotlinbasic.drawer.activities.AddEditTaskActivity
 import com.example.jake21x.kotlinbasic.model.Tasks
+import com.example.jake21x.kotlinbasic.services.AppLogger
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
+
+
 
 
 /**
@@ -53,7 +60,7 @@ class TaskFragment : Fragment() {
     var recyclerView: RecyclerView?=null;
     var adapter: TaskCustomAdapter?=null;
 
-    var DbStore:Db ? = null
+    var DbStore: Db? = null
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -88,6 +95,35 @@ class TaskFragment : Fragment() {
             // close this activity
             activity.overridePendingTransition(R.anim.push_down_from_up, R.anim.stay)
         }
+
+        _view!!.setFocusableInTouchMode(true)
+        _view!!.requestFocus()
+        _view!!.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    activity.alert(title = "Logout",message = "Are you sure you want to Logout?") {
+                        positiveButton("Yes") {
+
+                            val alarm = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+
+                            val intentForService = Intent(activity, AppLogger::class.java)
+
+                            val pendIntent = PendingIntent.getService(activity ,0 , intentForService , PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            alarm.cancel(pendIntent);
+
+                            activity.finish()
+                        }
+                        negativeButton("No") {  }
+                    }.show();
+
+                    return@OnKeyListener true
+                }
+            }
+            false
+        })
+
         return _view
     }
 
@@ -182,17 +218,26 @@ class TaskFragment : Fragment() {
         }
     }
 
-    class TaskCustomAdapter( val context:Context ,val TaskList : ArrayList<Tasks> , val DbStore:Db): RecyclerView.Adapter<TaskCustomAdapter.ViewHolder>()  {
+    class TaskCustomAdapter( val context:Context ,val TaskList : ArrayList<Tasks> , val DbStore: Db): RecyclerView.Adapter<TaskCustomAdapter.ViewHolder>()  {
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
 
             val item : Tasks = TaskList[position]
             val context : Context = context;
 
+            val pattern = SimpleDateFormat("hh:mm a")
+
             holder!!.txt_client.text = item.client
-            holder!!.txt_datetime.text = item.date+" , "+item.time
-            holder!!.txt_start_end.text  = item.starttime + " , "+item.endtime
-            holder!!.txt_location.text  = item.long +","+item.lat
+            holder!!.txt_datetime.text = SimpleDateFormat("MMM dd").format(Date(item.date)).toString()+" at "+item.time
+            holder!!.txt_start_end.text  =   "${getDateFromMsec(getDateDiffInMsec(  Date(item.starttime) , Date(item.endtime)))}"
+//            holder!!.txt_start_end.text  =   pattern.format(Date(item.starttime)).toString() +" - "+ pattern.format(Date(item.endtime)).toString()
+            holder!!.txt_startend_diff.text  =    ""
+
+            if(item.long.toString() != "0.0"){
+                holder!!.txt_location.text  = item.long.toString() +","+item.lat.toString()
+            }else{
+                holder!!.txt_location.text  = "No location stablished"
+            }
 
             var generator = ColorGenerator.MATERIAL;
 
@@ -214,16 +259,10 @@ class TaskFragment : Fragment() {
 
 
                         DbStore.use {
-//                             val result = delete(
-//                                     Tasks.TABLE_NAME,
-//                                     "${Tasks.id} = {id}" ,
-//                                     "2"
-//                                     ) > 0
+
                             var res  = delete(Tasks.TABLE_NAME , "${Tasks.id} = ${item.id}");
-                            context.toast("res: "+res.toString())
+                            //context.toast("res: "+res.toString())
                         }
-
-
 
                         dismiss()
                     }
@@ -238,6 +277,52 @@ class TaskFragment : Fragment() {
 
         override fun getItemCount(): Int {
             return TaskList.size
+        }
+
+        fun getDateDiffInMsec(da: Date, db: Date): Long {
+            var diffMSec: Long = 0
+            diffMSec = db.time - da.time
+            return diffMSec
+        }
+
+        // to convert Milliseconds into DD HH:MM:SS format.
+        fun getDateFromMsec(diffMSec: Long): String {
+            var left = 0
+            var ss = 0
+            var mm = 0
+            var hh = 0
+            var dd = 0
+            left = (diffMSec / 1000).toInt()
+            ss = left % 60
+            left = left.toInt() / 60
+            if (left > 0) {
+                mm = left % 60
+                left = left.toInt() / 60
+                if (left > 0) {
+                    hh = left % 24
+                    left = left.toInt() / 24
+                    if (left > 0) {
+                        dd = left
+                    }
+                }
+            }
+
+            var show_time_laps = "";
+            if(dd != 0){
+                show_time_laps += " ${dd}day(s)"
+            }
+            if(hh != 0){
+                show_time_laps += " ${hh}hr(s)"
+            }
+            if(mm != 0){
+                show_time_laps += " ${mm}min(s)"
+            }else if(ss != 0){
+                show_time_laps += " ${ss}sec(s)"
+            }else{
+                show_time_laps += " ${1}sec(s)"
+            }
+
+            return show_time_laps
         }
 
         fun getInitials(name: String?): String {
@@ -267,6 +352,7 @@ class TaskFragment : Fragment() {
             val txt_datetime = itemView.find<TextView>(R.id.txt_datetime);
             val txt_start_end = itemView.find<TextView>(R.id.txt_start_end);
             val txt_location = itemView.find<TextView>(R.id.txt_location);
+            val txt_startend_diff = itemView.find<TextView>(R.id.txt_startend_diff);
             val btn_delete = itemView.find<ImageView>(R.id.btn_delete);
             val item_container = itemView.find<LinearLayout>(R.id.item_container);
             val item_photoImageView = itemView.find<ImageView>(R.id.tasks_item_photoImageView);
