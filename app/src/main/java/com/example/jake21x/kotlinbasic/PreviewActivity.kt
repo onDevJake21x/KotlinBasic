@@ -1,27 +1,18 @@
 package com.example.jake21x.kotlinbasic
 
 import android.os.Bundle
-import android.widget.TextView
 import android.app.Activity
 import android.hardware.Camera
-import android.hardware.Camera.*
+import android.support.design.widget.FloatingActionButton
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_preview.*
-import org.jetbrains.anko.onClick
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import com.example.jake21x.kotlinbasic.utils.CameraView
-import android.widget.ImageButton
-import android.widget.FrameLayout
-import android.view.Surface.ROTATION_270
-import android.view.Surface.ROTATION_180
-import android.view.Surface.ROTATION_90
-import android.view.Surface.ROTATION_0
-import android.content.Intent
 import android.view.*
+import android.widget.ImageButton
 import android.widget.Toast
-import android.view.Window.FEATURE_NO_TITLE
+import org.jetbrains.anko.onClick
+import java.util.*
 
 
 class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallback, Camera.PictureCallback {
@@ -43,6 +34,21 @@ class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallba
         mPreview!!.holder.addCallback(this)
         mPreview!!.holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
         mCamera  = Camera.open(currentCameraId)
+
+        val onSnapClick = findViewById<FloatingActionButton>(R.id.onSnapClick)
+        onSnapClick.onClick {
+            mCamera!!.takePicture(this, null, null, this)
+        }
+
+        val onCancelClick_click = findViewById<ImageButton>(R.id.onCancelClick)
+        onCancelClick_click.onClick {
+            onCancelClick()
+        }
+
+        val close_click = findViewById<ImageButton>(R.id.close)
+        close_click.onClick {
+            close()
+        }
     }
 
     public override fun onPause() {
@@ -56,13 +62,11 @@ class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallba
         Log.d("CAMERA", "Destroy")
     }
 
-    fun close(v:View){
-        mCamera!!.release()
-        mCamera!!.stopPreview()
+    fun close(){
         finish()
     }
 
-    fun onCancelClick(v:View) {
+    fun onCancelClick() {
 
         mCamera!!.stopPreview()
         mCamera!!.release()
@@ -89,6 +93,7 @@ class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallba
 
         //STEP #2: Set the 'rotation' parameter
         val params = mCamera!!.parameters
+        params.setPictureSize(176, 144);
         params.setRotation(rotate)
         try {
             mCamera!!.setPreviewDisplay(mPreview!!.holder)
@@ -102,19 +107,16 @@ class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallba
         mCamera!!.startPreview()
     }
 
-    fun onSnapClick(v: View) {
-        mCamera!!.takePicture(this, null, null, this)
-    }
 
     override fun onShutter() {
-        Toast.makeText(this, "Click!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Image saved!", Toast.LENGTH_SHORT).show()
     }
 
     override fun onPictureTaken(data: ByteArray, camera: Camera) {
         //Here, we chose internal storage
         var fos: FileOutputStream? = null
         try {
-            filePath = "/sdcard/test.jpg"
+            filePath = "/sdcard/Photo-${UUID.randomUUID().toString()}.jpg"
             fos = FileOutputStream(
                     filePath)
             fos.write(data)
@@ -153,6 +155,7 @@ class PreviewActivity : Activity(), SurfaceHolder.Callback, Camera.ShutterCallba
 
         //STEP #2: Set the 'rotation' parameter
         val params = mCamera!!.parameters
+        params.setPictureSize(176, 144);
         params.setRotation(rotate)
         mCamera!!.parameters = params
         mCamera!!.setDisplayOrientation(90)

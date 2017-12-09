@@ -352,7 +352,7 @@ class AddEditTaskActivity  : AppCompatActivity() {
 
 
                 DbStore!!.use {
-                  insert(Tasks.TABLE_NAME,
+                  val lastId = insert(Tasks.TABLE_NAME,
                           Tasks.user_id to DbStore!!.getSession(DbStore!!)[0].user_id.toString(),
                           Tasks.remarks to input_remarks.text.toString(),
                           Tasks.long to gps!!.longitude,
@@ -363,6 +363,8 @@ class AddEditTaskActivity  : AppCompatActivity() {
                           Tasks.endtime to use_end_time.toString(),
                           Tasks.client to input_client.text.toString()
                           )
+
+                    toast("last id inserted! = "+lastId.toString())
                 }
 
                 inputClear();

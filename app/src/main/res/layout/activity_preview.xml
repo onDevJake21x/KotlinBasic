@@ -20,26 +20,25 @@
         android:layout_height="match_parent" />
 
     <ImageButton
+        android:id="@+id/onCancelClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onCancelClick"
         android:layout_gravity="left|top"
         android:layout_margin="15dp"
         android:background="@drawable/ic_camera_front"
         android:padding="20dp"/>
 
     <ImageButton
+        android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="close"
         android:layout_gravity="right|top"
         android:layout_margin="15dp"
         android:background="@drawable/ic_close"
         android:padding="20dp"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCapture"
-        android:onClick="onSnapClick"
+        android:id="@+id/onSnapClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

@@ -12,6 +12,7 @@ import java.util.*
 import android.os.BatteryManager
 import android.content.Intent
 import android.content.IntentFilter
+import com.example.jake21x.kotlinbasic.model.Images
 import com.example.jake21x.kotlinbasic.model.Tasks
 
 
@@ -23,6 +24,7 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
     var dbuser : Session? = null
     var dblogs : Logs? = null
     var dbtask : Tasks? = null
+    var dbTaskImages : Images? = null
 
     companion object {
         private var instance: Db? = null
@@ -77,6 +79,14 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
                 Tasks.status to TEXT + DEFAULT("unsync")
         )
 
+        database.createTable(Images.TABLE_NAME, true,
+                Images.id to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                Images.user_id to TEXT,
+                Images.fullpath to TEXT,
+                Images.tag to TEXT,
+                Images.date to TEXT
+        )
+
         Toast.makeText(mContext, "table created",Toast.LENGTH_SHORT).show()
     }
 
@@ -84,6 +94,7 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
         database.dropTable(Logs.TABLE_NAME, true)
         database.dropTable(Session.TABLE_NAME, true)
         database.dropTable(Tasks.TABLE_NAME, true)
+        database.dropTable(Images.TABLE_NAME, true)
     }
 
 
@@ -133,6 +144,32 @@ class Db(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "marca-native-app.db", nul
                             token =  token.toString()
                     );
                     return dbuser!!
+                }
+
+            })
+        }
+        return loggedin
+    }
+
+    fun getTaskImages(db:ManagedSQLiteOpenHelper) : List<Images>{
+        val loggedin = db.use {
+            select(Images.TABLE_NAME).parseList(object :org.jetbrains.anko.db.MapRowParser<Images>{
+                override fun parseRow(columns: Map<String, Any>): Images {
+
+                    val id = columns.getValue("id");
+                    val user_id = columns.getValue("user_id");
+                    val fullpath = columns.getValue("fullpath");
+                    val tag = columns.getValue("tag");
+                    val date = columns.getValue("date");
+
+                    dbTaskImages = Images(
+                            id = id.toString(),
+                            user_id = user_id.toString(),
+                            fullpath = fullpath.toString(),
+                            tag = tag.toString(),
+                            date = date.toString()
+                    );
+                    return dbTaskImages!!
                 }
 
             })
